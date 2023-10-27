@@ -1,0 +1,11 @@
+{
+    "version": 1,
+    "async": {
+        "js": ["async.js"],
+        "css": ["async.css"]
+    },
+    "initial": {
+        "js": ["initial.js"],
+        "css": ["initial.css"]
+    }
+}

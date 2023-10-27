@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "declarationDir":"./types",
+        "lib": [
+            "es2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        },
+        "sourceMap": true,
+        "module": "esnext",
+        "target": "esnext",
+        "allowJs": true,
+        "checkJs": false,
+        "composite": false,
+        "declaration": true,
+        "declarationMap": false,
+        "downlevelIteration": true,
+        "importHelpers": false,
+        "incremental": false,
+        "isolatedModules": false,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "esModuleInterop": true,
+        "noImplicitOverride": true,
+        "experimentalDecorators": true,
+        "useDefineForClassFields": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "removeComments": false,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true
+    },
+    "exclude": [
+        "src/**/*.js",
+        "node_modules"
+    ]
+}

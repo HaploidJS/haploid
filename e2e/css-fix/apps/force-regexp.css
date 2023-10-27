@@ -1,0 +1,17 @@
+@charset "utf8";
+
+:root {
+    --bg: cyan;
+}
+
+.root {
+    font-size: 40px;
+    color: red;
+    /* background: url('old.png'); */
+    background: url('new.png');
+}
+
+div {
+    background: var(--bg);
+    background-repeat: no-repeat;
+}

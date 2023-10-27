@@ -1,0 +1,8 @@
+node_modules
+dist
+src/**/*.js
+src/tapable/
+types
+*.json
+mocks
+e2e/sandbox/fixtures/syntax.js

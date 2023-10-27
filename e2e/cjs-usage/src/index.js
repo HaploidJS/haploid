@@ -1,0 +1,1 @@
+window.haploid = require('haploid');

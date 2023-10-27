@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <style>
+            .foo {
+                font-size: 12px;
+            }
+        </style>
+        <!-- this is ignored -->
+        <style type="text/plain">
+            .foo {
+                font-size: 13px;
+            }
+        </style>
+        <link rel="stylesheet" href="./padding.css">
+        <!-- this is ignored -->
+        <link rel="preload" href="./padding-preload.css">
+        <!-- this is ignored -->
+        <link rel="stylesheet" href="./padding-disabled.css" disabled>
+        <script type="module" entry src="./foo.mjs"></script>
+    </head>
+    <body>
+        <!-- this runs before foo.mjs -->
+        <script>
+            var count = 1;
+        </script>
+        <!-- this runs after foo.mjs -->
+        <script defer src="./finally.js"></script>
+    </body>
+</html>

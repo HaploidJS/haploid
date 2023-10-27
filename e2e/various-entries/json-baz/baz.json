@@ -1,0 +1,8 @@
+{
+    "module": "umd",
+    "version": 1,
+    "initial": {
+        "css": [],
+        "js": ["./baz.js"]
+    }
+}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <title>ESM Usage</title>
+        <style>
+            html, body {
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+        <script type="module">
+            import * as haploid from './haploid.esm.dev.js';
+            globalThis.haploid = haploid;
+        </script>
+    </head>
+    <body>
+        <div id="app"></div>
+    </body>
+</html>
