@@ -2,6 +2,8 @@
 
 ### High-Concurrency.Multiple-Instances. Micro-Frontend
 
+![build status](https://github.com/HaploidJS/haploid/actions/workflows/check-build.yml/badge.svg) ![publish status](https://github.com/HaploidJS/haploid/actions/workflows/publish-npm.yml/badge.svg)
+
 </div>
 
 ---

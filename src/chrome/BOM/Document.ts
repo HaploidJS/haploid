@@ -419,6 +419,8 @@ export class DocumentNode extends EventNodeProxy<Document> implements DocumentSh
                     for (const ele of styles) {
                         if (ele.sheet) {
                             list.push(ele.sheet);
+                        } else {
+                            debug(`${ele} has no sheet, exclude it from document.styleSheets.`);
                         }
                     }
 

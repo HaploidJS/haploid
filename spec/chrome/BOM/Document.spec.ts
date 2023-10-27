@@ -323,7 +323,8 @@ describe.only('Document', () => {
     });
 
     it('styleSheets refers to all avaliable <style> and <link>', async () => {
-        doc.bodyElement.innerHTML = `<div><link rel="stylesheet" href="http://localhost:10810/chrome/BOM/Document/StyleSheets.css" /><style type="text/css">i{}</style></div>`;
+        doc.bodyElement.innerHTML = `<div><link rel="stylesheet" href="http://localhost:10810/chrome/BOM/Document/styleSheets.css" /><style type="text/css">i{}</style></div>`;
+        // sheet works only after DOM connected.
         document.body.appendChild(doc.htmlElement);
         await delay(400);
         expect(doc.node.styleSheets).toHaveLength(2);
