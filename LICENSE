@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 kuaishou.com
+Copyright (c) 2023 Kwai, Inc
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,3 +26,9 @@ Other dependencies and licenses:
 - tapable
     - Copyright JS Foundation and other contributors
     - MIT License
+- systemjs
+  - Copyright Guy Bedford
+  - MIT License
+- murmurhash-js
+  - Copyright Gary Court
+  - MIT License
