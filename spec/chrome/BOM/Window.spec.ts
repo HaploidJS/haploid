@@ -24,22 +24,22 @@ describe.only('Window', () => {
         expect(win.node.window).toStrictEqual<Window>(win.node);
     });
 
-    it('self is windowself and assigning is working', () => {
+    it('self is windowself and assigning is not working', () => {
         expect(win.node.self).toStrictEqual<Window>(win.node);
         Reflect.set(win.node, 'self', null);
-        expect(win.node.self).toStrictEqual(null);
+        expect(win.node.self).toStrictEqual<Window>(win.node);
     });
 
-    it('top is windowself and assigning is working', () => {
-        expect(win.node.top).toStrictEqual(win.node);
+    it('top is windowself and assigning is not working', () => {
+        expect(win.node.top).toStrictEqual<Window>(win.node);
         Reflect.set(win.node, 'top', null);
-        expect(win.node.top).toStrictEqual(null);
+        expect(win.node.top).toStrictEqual<Window>(win.node);
     });
 
-    it('parent is windowself and assigning is working', () => {
-        expect(win.node.parent).toStrictEqual(win.node);
+    it('parent is windowself and assigning is not working', () => {
+        expect(win.node.parent).toStrictEqual<Window>(win.node);
         Reflect.set(win.node, 'parent', null);
-        expect(win.node.parent).toStrictEqual(null);
+        expect(win.node.parent).toStrictEqual<Window>(win.node);
     });
 
     it('location refers to the global one', () => {

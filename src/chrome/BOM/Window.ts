@@ -6,7 +6,6 @@ import { LocalStorageNode } from './LocalStorage';
 import { nativeWindow } from '../utils';
 
 import { mergeByDescriptor } from '../../utils/mergeByDescriptor';
-import { hasOwn } from '../../utils/hasOwn';
 
 const presetEscapedKyes = [
     'eval',
@@ -328,9 +327,6 @@ function patchFetch(
 export class WindowNode extends EventNodeProxy<Window & typeof globalThis> implements WindowShadow {
     readonly #doc: DocumentNode;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    readonly #overridedMap: Record<string, any> = {};
-
     readonly #options: WindowOptions;
 
     readonly #timeouts: number[];
@@ -403,35 +399,16 @@ export class WindowNode extends EventNodeProxy<Window & typeof globalThis> imple
         const getDoc = (): Document => this.#doc.node;
         const debug = this.debug;
 
-        const hasOverride = (key: string): boolean => hasOwn(this.#overridedMap, key);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const getOverride = (key: string): any => this.#overridedMap[key];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const setOverride = (key: string, val: any): void => (this.#overridedMap[key] = val);
-
         return mergeByDescriptor(
             {
                 get window(): Window {
                     return getNode();
                 },
                 get self(): Window {
-                    if (hasOverride('self')) {
-                        debug('return overrided self');
-                        return getOverride('self');
-                    }
-
                     debug('return this window as self');
                     return getNode();
                 },
-                set self(w: Window) {
-                    debug('set self: %o.', w);
-                    setOverride('self', w);
-                },
                 get top(): Window | null {
-                    if (hasOverride('top')) {
-                        debug('return overrided top');
-                        return getOverride('top');
-                    }
                     if (nativeWindow === nativeWindow.top) {
                         debug('return this window as top');
                         return getNode();
@@ -440,15 +417,7 @@ export class WindowNode extends EventNodeProxy<Window & typeof globalThis> imple
                     debug('return real top');
                     return nativeWindow.top;
                 },
-                set top(w: Window | null) {
-                    debug('set top: %o.', w);
-                    setOverride('top', w);
-                },
                 get parent(): Window {
-                    if (hasOverride('parent')) {
-                        debug('return overrided parent');
-                        return getOverride('parent');
-                    }
                     if (nativeWindow === nativeWindow.parent) {
                         debug('return this window as parent');
                         return getNode();
@@ -456,10 +425,6 @@ export class WindowNode extends EventNodeProxy<Window & typeof globalThis> imple
 
                     debug('return real parent');
                     return nativeWindow.parent;
-                },
-                set parent(w: Window) {
-                    debug('set parent: %o.', w);
-                    setOverride('parent', w);
                 },
                 get globalThis(): Window {
                     return getNode();
