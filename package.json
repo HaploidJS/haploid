@@ -35,7 +35,8 @@
     "prebuild": "npm run clean && npm run test:unit",
     "postbuild": "npm run test:e2e",
     "prepack": "npm run build",
-    "prepare": "is-ci || husky install"
+    "prepare": "is-ci || husky install",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",
@@ -75,6 +76,7 @@
     "babel-jest": "^29.7.0",
     "clean-css": "^5.3.2",
     "concurrently": "^8.2.2",
+    "conventional-changelog-cli": "^4.1.0",
     "cypress": "^13.3.3",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
