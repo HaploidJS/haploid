@@ -1,6 +1,6 @@
 {
   "name": "haploid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A micro-frontend framework inspired by and compatible with single-spa",
   "workspaces": [
     "e2e/cjs-usage",

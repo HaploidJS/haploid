@@ -6,7 +6,7 @@ import type { AppAPI } from './App';
  */
 export class ManualContainer<
     ContainerAdditionalOptions = Record<never, never>,
-    AppAdditionalOptions = Record<never, never>
+    AppAdditionalOptions = Record<never, never>,
 > extends Container<ContainerAdditionalOptions, AppAdditionalOptions> {
     protected override get debugName(): string {
         return `manual-container:${this.options.name}`;

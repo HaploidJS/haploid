@@ -27,7 +27,7 @@ export interface RouterContainerBaseOptions {
  */
 export class RouterContainer<
     ContainerAdditionalOptions = Record<never, never>,
-    AppAdditionalOptions = Record<never, never>
+    AppAdditionalOptions = Record<never, never>,
 > extends Container<RouterContainerBaseOptions & ContainerAdditionalOptions, RouterAppOptions & AppAdditionalOptions> {
     #running = false;
 
