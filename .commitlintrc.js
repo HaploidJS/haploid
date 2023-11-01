@@ -4,6 +4,6 @@ module.exports = {
         'subject-empty': [2, 'never'],
         'subject-min-length': [2, 'always', 10],
         'type-empty': [2, 'never'],
-        'type-enum': [2, 'always', ['feat', 'fix', 'docs', 'style', 'refactor', 'test', 'revert', 'chore']],
+        'type-enum': [2, 'always', ['release', 'perf', 'feat', 'fix', 'docs', 'style', 'refactor', 'test', 'revert', 'chore']],
     },
 };

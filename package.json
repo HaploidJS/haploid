@@ -36,7 +36,9 @@
     "postbuild": "npm run test:e2e",
     "prepack": "npm run build",
     "prepare": "is-ci || husky install",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "update-version": "bumpp --execute=\"npm run changelog\" --commit \"release: publish v%s\" --all",
+    "release": "npm run lint && npm run build && npm run update-version"
   },
   "repository": {
     "type": "git",
@@ -74,6 +76,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "babel-jest": "^29.7.0",
+    "bumpp": "^9.2.0",
     "clean-css": "^5.3.2",
     "concurrently": "^8.2.2",
     "conventional-changelog-cli": "^4.1.0",
