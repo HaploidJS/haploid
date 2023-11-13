@@ -11,6 +11,11 @@ import { asyncSequence } from './utils/asyncSequence';
 import { Debugger } from './utils/Debugger';
 import { toArray } from './utils/toArray';
 
+export interface LifecycleHistory {
+    name: string;
+    status: 'pending' | 'success' | 'failed';
+}
+
 export interface LifecycleEvent {
     beforebootstrap: void;
     afterbootstrap: void;
@@ -80,6 +85,7 @@ function createLifecycleHooks<T>(): LifecycleHooks<T> {
 export interface LifecycleAPI<CustomProps> {
     hooks: LifecycleHooks<CustomProps>;
     get customProps(): CustomProps;
+    get history(): LifecycleHistory[];
     readonly fns: {
         call: (
             fnName: keyof LifecycleFns<CustomProps>,
@@ -114,6 +120,8 @@ export class Lifecycle<CustomProps> extends Debugger implements ProtectedEventEm
     #apiInstance: LifecycleAPI<CustomProps> | null = null;
 
     readonly #fixedProps: FixedLifecycleProps;
+
+    readonly #history: LifecycleHistory[] = [];
 
     public declare readonly hooks: LifecycleHooks<CustomProps>;
 
@@ -223,12 +231,16 @@ export class Lifecycle<CustomProps> extends Debugger implements ProtectedEventEm
     public get api(): LifecycleAPI<CustomProps> {
         const getCustomProps = (): CustomProps => this.customProps;
         const getFns = (): LifecycleFns<CustomProps> | null => this.fns;
+        const getHistory = (): LifecycleHistory[] => this.#history;
 
         if (!this.#apiInstance) {
             this.#apiInstance = Object.freeze({
                 hooks: this.hooks,
                 get customProps(): CustomProps {
                     return getCustomProps();
+                },
+                get history(): LifecycleHistory[] {
+                    return getHistory();
                 },
                 fns: Object.freeze({
                     call: (
@@ -365,6 +377,9 @@ export class Lifecycle<CustomProps> extends Debugger implements ProtectedEventEm
             throw Error(`${this} has no ${name} lifecycle function.`);
         }
 
+        const record: LifecycleHistory = { name, status: 'pending' };
+        this.#history.push(record);
+
         return asyncSequence(
             fns,
             [
@@ -376,6 +391,14 @@ export class Lifecycle<CustomProps> extends Debugger implements ProtectedEventEm
             null,
             (index: number) => {
                 if (each) each(index, fns.length);
+            }
+        ).then(
+            () => {
+                record.status = 'success';
+            },
+            (err: Error) => {
+                record.status = 'failed';
+                throw err;
             }
         );
     }

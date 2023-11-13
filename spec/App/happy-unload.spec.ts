@@ -92,4 +92,15 @@ describe.only(`happy-unload`, () => {
         await expect(unloadingPromise).resolves.toBeUndefined();
         expect(afterUnload).not.toBeCalled();
     });
+
+    it(`unload() won't call unmount if not necessary`, async () => {
+        const afterUnload = jest.fn();
+        const app = createApp({
+            unmount: (): Promise<void> => afterUnload(),
+        });
+        await app.start();
+        await app.stop();
+        await app.unload();
+        expect(afterUnload).toBeCalledTimes(1);
+    });
 });

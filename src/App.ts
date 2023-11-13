@@ -1030,10 +1030,14 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
         this.#unloadingPromise = promiseIgnoreCatch(this.hooks.beforeunload.promise())
             .then(() => {
                 this.debug('Start unloading.');
+                const lastLifecycleFn = this.lifecycle.history[this.lifecycle.history.length - 1];
                 this.#state = AppState.UNLOADING;
                 return promiseIgnoreCatch(
                     reasonableTime(
-                        this.#lifecycle.unmount(),
+                        // Don't call unmount duplicatly.
+                        lastLifecycleFn && lastLifecycleFn.name === 'unmount' && lastLifecycleFn.status === 'success'
+                            ? Promise.resolve()
+                            : this.#lifecycle.unmount(),
                         this.timeouts.unmount,
                         `${this} unmounting timeout of %dms.`
                     )

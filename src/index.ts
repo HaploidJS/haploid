@@ -8,7 +8,7 @@ import './plugins/SafeModePlugin';
 
 export type { App, AppAPI, AppHooks } from './App';
 export { AppState, AppEvent } from './App';
-export { LifecycleEvent } from './Lifecycle';
+export { LifecycleEvent, LifecycleHistory } from './Lifecycle';
 export type { Lifecycle, LifecycleAPI } from './Lifecycle';
 export type {
     AppOptions,
