@@ -1,3 +1,7 @@
+## 1.1.0 (2023-11-13)
+
+-   feat: prevent necessary unmount ([6dc8108](https://github.com/HaploidJS/haploid/commit/6dc8108))
+
 ## <small>1.0.1 (2023-11-01)</small>
 
 -   ci: add release script ([ef810bc](https://github.com/HaploidJS/haploid/commit/ef810bc))

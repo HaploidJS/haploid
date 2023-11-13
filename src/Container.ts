@@ -445,9 +445,7 @@ export abstract class Container<ContainerAdditionalOptions, AppAdditionalOptions
                         this.debug('The app %s starts successfully.', name);
                         if (name !== this.#lastAppNameTryingActivate) {
                             this.debug(
-                                `But the newest app ${
-                                    this.#lastAppNameTryingActivate
-                                } is activating, don't emit appactivated.`
+                                `But the newest app ${this.#lastAppNameTryingActivate} is activating, don't emit appactivated.`
                             );
                             throw Error(
                                 `${this}'s activating ${name} is interrupted by ${this.#lastAppNameTryingActivate}.`
