@@ -32,3 +32,6 @@ Other dependencies and licenses:
 - murmurhash-js
   - Copyright Gary Court
   - MIT License
+- single-spa
+  - Copyright single-spa
+  - MIT License
