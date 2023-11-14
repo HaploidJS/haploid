@@ -3,11 +3,11 @@
 describe.only('entry-html', () => {
     beforeEach(() => {
         cy.visit(`/app-options/app-plugin-options/load-from-entry/various-entries/index.html`);
-        cy.window().then(win => win.history.pushState(null, '', '#/foo'));
+        cy.window().then(win => win.history.pushState(null, '', '#/entry-html'));
     });
 
     it(`mounted successfully(entry found)`, () => {
-        cy.get('#app h1').should('have.text', 'foo mounted');
+        cy.get('#app h1').should('have.text', 'entry-html mounted');
     });
 
     it(`retrieve inline <style>, but ignore illegal ones`, () => {

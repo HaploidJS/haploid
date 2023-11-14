@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
-describe.only('entry-esm-keyed', () => {
+describe.only('entry-js-umd', () => {
     beforeEach(() => {
         cy.visit(`/app-options/app-plugin-options/load-from-entry/various-entries/index.html`);
-        cy.window().then(win => win.history.pushState(null, '', '#/keyed-esm'));
+        cy.window().then(win => win.history.pushState(null, '', '#/entry-js-umd'));
     });
 
     it(`mounted successfully`, () => {
-        cy.get('#app h1').should('have.text', 'keyed-esm mounted');
+        cy.get('#app h1').should('have.text', 'entry-js-umd mounted');
     });
 });

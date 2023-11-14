@@ -7,49 +7,63 @@ const container = new RouterContainer({
 
 container.registerApps([
     {
-        name: 'foo',
-        activeWhen: loc => loc.hash === '#/foo',
-        entry: './html-foo/index.html',
+        name: 'entry-html',
+        activeWhen: loc => loc.hash === '#/entry-html',
+        entry: './entry-html/index.html',
     },
     {
-        name: 'bar',
-        activeWhen: loc => loc.hash === '#/bar',
-        entry: './js-bar/bar.mjs',
+        name: 'entry-js-esm',
+        activeWhen: loc => loc.hash === '#/entry-js-esm',
+        entry: './entry-js-esm/entry.mjs',
     },
     {
-        name: 'keyed-esm',
-        activeWhen: loc => loc.hash === '#/keyed-esm',
-        entry: './keyed-esm/keyed-esm.mjs',
+        name: 'entry-js-esm-keyed',
+        activeWhen: loc => loc.hash === '#/entry-js-esm-keyed',
+        entry: './entry-js-esm-keyed/entry.mjs',
     },
     {
-        name: 'baz',
-        activeWhen: loc => loc.hash === '#/baz',
-        entry: './json-baz/baz.json',
+        name: 'entry-js-umd',
+        activeWhen: loc => loc.hash === '#/entry-js-umd',
+        entry: './entry-js-umd/entry.js',
     },
     {
-        name: 'asset',
-        activeWhen: loc => loc.hash === '#/asset',
-        assetsMap: () =>
-            Promise.resolve({
-                module: 'esm',
-                version: 1,
-                initial: {
-                    js: ['./assets-json/entry.js'],
-                },
-            }),
+        name: 'entry-json',
+        activeWhen: loc => loc.hash === '#/entry-json',
+        entry: './entry-json/entry.json',
     },
     {
-        name: 'lf',
-        activeWhen: loc => loc.hash === '#/lf',
-        lifecycle: () =>
-            Promise.resolve({
-                mount({ domElement, name }) {
-                    domElement.innerHTML = `<h1>${name} mounted</h1>`;
-                },
-                unmount({ domElement }) {
-                    domElement.innerHTML = '';
-                },
-            }),
+        name: 'entry-assetmap-esm',
+        activeWhen: loc => loc.hash === '#/entry-assetmap-esm',
+        assetsMap: {
+            module: 'esm',
+            version: 1,
+            initial: {
+                js: ['./entry-js-esm/entry.mjs'],
+            },
+        },
+    },
+    {
+        name: 'entry-assetmap-umd',
+        activeWhen: loc => loc.hash === '#/entry-assetmap-umd',
+        assetsMap: {
+            module: 'umd',
+            version: 1,
+            initial: {
+                js: ['./entry-js-umd/entry.js'],
+            },
+        },
+    },
+    {
+        name: 'lifecycle',
+        activeWhen: loc => loc.hash === '#/lifecycle',
+        lifecycle: {
+            mount({ domElement, name }) {
+                domElement.innerHTML = `<h1>${name} mounted</h1>`;
+            },
+            unmount({ domElement }) {
+                domElement.innerHTML = '';
+            },
+        },
     },
 ]);
 

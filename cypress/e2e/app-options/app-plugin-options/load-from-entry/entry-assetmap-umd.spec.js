@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
-describe.only('entry-json-object', () => {
+describe.only('entry-assetmap-esm', () => {
     beforeEach(() => {
         cy.visit(`/app-options/app-plugin-options/load-from-entry/various-entries/index.html`);
-        cy.window().then(win => win.history.pushState(null, '', '#/asset'));
+        cy.window().then(win => win.history.pushState(null, '', '#/entry-assetmap-umd'));
     });
 
     it(`mounted successfully`, () => {
-        cy.get('#app h1').should('have.text', 'asset mounted');
+        cy.get('#app h1').should('have.text', 'entry-assetmap-umd mounted');
     });
 });

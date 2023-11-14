@@ -3,6 +3,6 @@
     "version": 1,
     "initial": {
         "css": [],
-        "js": ["./baz.js"]
+        "js": ["./entry.js"]
     }
 }
