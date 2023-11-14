@@ -1,3 +1,12 @@
+## 1.2.0 (2023-11-14)
+
+-   test: refactor e2e ([28fe637](https://github.com/HaploidJS/haploid/commit/28fe637))
+-   test: replace jest deprecated API ([92f68f3](https://github.com/HaploidJS/haploid/commit/92f68f3))
+-   test(load-from-entry): refactor e2e cases ([1e8fe93](https://github.com/HaploidJS/haploid/commit/1e8fe93))
+-   feat: change fallbackOnlyWhen type to Activity\n\nBREAKING CHANGE: string with "#" prefix passed to ([f394d8c](https://github.com/HaploidJS/haploid/commit/f394d8c))
+-   feat: skip unmount if ever unmount successfully before or no mount before when unloading ([ca3095a](https://github.com/HaploidJS/haploid/commit/ca3095a))
+-   chore: reference single-spa to LICENSE ([63610ad](https://github.com/HaploidJS/haploid/commit/63610ad))
+
 ## 1.1.0 (2023-11-13)
 
 -   feat: prevent necessary unmount ([6dc8108](https://github.com/HaploidJS/haploid/commit/6dc8108))
