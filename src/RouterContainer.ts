@@ -16,7 +16,7 @@ export type CancelationRouterNavigation = Readonly<
 
 export interface RouterContainerBaseOptions {
     fallbackUrl?: string;
-    fallbackOnlyWhen?: ActivityFn;
+    fallbackOnlyWhen?: Activity;
     cancelActivateApp?: (app: string | undefined, event: CancelationRouterNavigation) => Promise<boolean> | boolean;
     disableAppConflictWarning?: boolean;
 }
@@ -232,7 +232,8 @@ export class RouterContainer<
     }
 
     #getRedirectUrlUnderLocation(loc: AppLocation): string | undefined {
-        const fallbackOnlyWhen = this.options.fallbackOnlyWhen ?? ((): boolean => true);
+        const fallbackOnlyWhen = sanitizeActiveWhen(this.options.fallbackOnlyWhen ?? ((): boolean => true));
+
         const fallbackUrl = this.options.fallbackUrl;
 
         if ('string' === typeof fallbackUrl && fallbackOnlyWhen(loc)) {

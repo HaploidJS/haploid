@@ -7,7 +7,9 @@ function toDynamicPathValidatorRegex(path: string, exactMatch = false): RegExp {
         inDynamic = false,
         regexStr = '^';
 
-    if (path[0] !== '/') {
+    // 🔥 Breaking change, do not prefix with '/' when starts with '#'
+    // Consider ? later
+    if (path[0] !== '/' && path[0] !== '#') {
         path = `/${path}`;
     }
 
@@ -59,10 +61,12 @@ function toDynamicPathValidatorRegex(path: string, exactMatch = false): RegExp {
     }
 }
 
-function pathToActiveWhen(path: string, exactMatch = false): ActivityFn {
+export function pathToActiveWhen(path: string, exactMatch = false): ActivityFn {
     const regex = toDynamicPathValidatorRegex(path, exactMatch);
 
     return (location: AppLocation) => {
+        // 🔥 Breaking change: if path starts with a '#', we test it with hash only
+        if (path.startsWith('#')) return regex.test(location.hash);
         const origin = location.origin;
         const route = location.href.replace(origin, '').replace(location.search, '').split('?')[0];
         return regex.test(route);

@@ -10,7 +10,7 @@ const container = new RouterContainer({
 container.registerApps([
     {
         name: 'foo',
-        activeWhen: loc => loc.hash === '#/foo',
+        activeWhen: '#/foo',
         lifecycle: {
             mount({ domElement, name }) {
                 domElement.innerHTML = `${name} mounted`;

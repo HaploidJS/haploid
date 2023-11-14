@@ -8,12 +8,12 @@ const container = new RouterContainer({
 container.registerApps([
     {
         name: 'fix-url',
-        activeWhen: loc => loc.hash === '#/fix-url',
+        activeWhen: '#/fix-url',
         entry: './apps/fix-url.html',
     },
     {
         name: 'force-regexp',
-        activeWhen: loc => loc.hash === '#/force-regexp',
+        activeWhen: '#/force-regexp',
         entry: './apps/force-regexp.html',
         dropURLFixInCSSByStyleSheet: true,
     },

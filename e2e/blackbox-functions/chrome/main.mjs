@@ -20,19 +20,19 @@ container.registerApps([
         envVariables: {
             __ENV_VAR__: true,
         },
-        activeWhen: loc => loc.hash === '#/env',
+        activeWhen: '#/env',
     },
     {
         name: 'dynamic-script',
         sandbox: true,
         entry: './dynamic-script.js',
-        activeWhen: loc => loc.hash === '#/dynamic-script',
+        activeWhen: '#/dynamic-script',
     },
     {
         name: 'dynamic-link',
         sandbox: true,
         entry: './dynamic-link.js',
-        activeWhen: loc => loc.hash === '#/dynamic-link',
+        activeWhen: '#/dynamic-link',
     },
     {
         name: 'escaped-events',
@@ -41,13 +41,13 @@ container.registerApps([
             escapeDocumentEvents: ['escaped-event'],
         },
         entry: './escaped-events.js',
-        activeWhen: loc => loc.hash === '#/escaped-events',
+        activeWhen: '#/escaped-events',
     },
     {
         name: 'scoped-events',
         sandbox: true,
         entry: './scoped-events.js',
-        activeWhen: loc => loc.hash === '#/scoped-events',
+        activeWhen: '#/scoped-events',
     },
 ]);
 

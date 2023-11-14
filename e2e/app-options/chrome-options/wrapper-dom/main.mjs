@@ -17,19 +17,19 @@ const lifecycle = {
 container.registerApps([
     {
         name: 'default-wrapper',
-        activeWhen: loc => loc.hash === '#/default-wrapper',
+        activeWhen: '#/default-wrapper',
         lifecycle,
     },
     {
         name: 'mutiple-elements',
         domWrapper: '<div></div><div></div>',
-        activeWhen: loc => loc.hash === '#/mutiple-elements',
+        activeWhen: '#/mutiple-elements',
         lifecycle,
     },
     {
         name: 'no-elements',
         domWrapper: 'TEXT<!-->XX',
-        activeWhen: loc => loc.hash === '#/no-elements',
+        activeWhen: '#/no-elements',
         lifecycle,
     },
     {
@@ -42,7 +42,7 @@ container.registerApps([
             <title></title>
             <base></base>
             <p class="content" contenteditable onclick=";"></p>`,
-        activeWhen: loc => loc.hash === '#/filter-tags',
+        activeWhen: '#/filter-tags',
         lifecycle: {
             mount() {},
             unmount() {},
@@ -67,7 +67,7 @@ document.querySelector('form').addEventListener('submit', e => {
     container.registerApp({
         name: 'never',
         domWrapper,
-        activeWhen: loc => loc.hash === '#/never',
+        activeWhen: '#/never',
         lifecycle,
     });
 });

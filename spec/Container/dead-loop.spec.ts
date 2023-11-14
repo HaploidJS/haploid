@@ -16,7 +16,7 @@ describe.only(`dead-loop`, () => {
             name: 'rootA',
             root: appA,
             fallbackUrl: '/foo',
-            fallbackOnlyWhen: (loc): boolean => loc.pathname === '/test',
+            fallbackOnlyWhen: '/test',
         });
 
         containerA.registerApp({

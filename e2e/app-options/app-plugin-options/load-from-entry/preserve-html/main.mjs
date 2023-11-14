@@ -10,7 +10,7 @@ container.registerApps([
         name: 'sync-app-html',
         entry: './sync-app-html/index.html',
         preserveHTML: true,
-        activeWhen: loc => loc.hash === '#/sync-app-html',
+        activeWhen: '#/sync-app-html',
     },
     {
         name: 'preset-options-prefer',
@@ -19,7 +19,7 @@ container.registerApps([
         presetBodyHTML: '<div id="preset-options-prefer"></div>',
         presetHeadHTML: '<meta name="keywords" content="">',
         title: 'override title',
-        activeWhen: loc => loc.hash === '#/preset-options-prefer',
+        activeWhen: '#/preset-options-prefer',
     },
 ]);
 

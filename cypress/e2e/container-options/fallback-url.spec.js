@@ -2,10 +2,10 @@
 
 describe.only('fallback-url', () => {
     beforeEach(() => {
-        cy.visit(`/container-options/fallback-url/index.html`);
+        cy.visit(`/container-options/fallback-url/index.html#/`);
     });
 
-    it(`fallback only at /`, () => {
+    it(`fallback only at #/`, () => {
         cy.window().then(win => {
             cy.location('hash')
                 .should('eq', '#/foo')
