@@ -1,0 +1,1 @@
+'Hello' |> console.log;

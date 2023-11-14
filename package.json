@@ -3,8 +3,9 @@
   "version": "1.1.0",
   "description": "A micro-frontend framework inspired by and compatible with single-spa",
   "workspaces": [
-    "e2e/cjs-usage",
-    "e2e/systemjs-usage"
+    "e2e/sdk-references/cjs-usage",
+    "e2e/sdk-references/systemjs-usage",
+    "e2e/additional-usage/with-external"
   ],
   "main": "dist/haploid.cjs.min.js",
   "module": "dist/haploid.esm.min.js",
@@ -25,7 +26,7 @@
     "build": "rollup -c rollup.config.mjs",
     "clean": "rm -rf dist types",
     "lint": "prettier \"{src,mocks,spec}/**/*.{ts,css,js,html}\" --write && eslint \"{src,spec}/**/*.{ts,js}\" --fix",
-    "init": "npm i -ws --include-workspace-root",
+    "boostrap": "npm i -ws --include-workspace-root",
     "test": "npm run build",
     "test:unit": "node scripts/run-unit.mjs",
     "test:e2e": "npm run build:e2e && node scripts/run-e2e.mjs",
@@ -93,6 +94,7 @@
     "kill-port": "^2.0.0",
     "less": "^4.2.0",
     "lint-staged": "^15.1.0",
+    "mime": "^3.0.0",
     "p-retry": "^4.6.2",
     "prettier": "^3.1.0",
     "rollup": "^4.4.0",

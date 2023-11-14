@@ -1,11 +1,12 @@
 import http from 'http';
 import path from 'path';
 import url from 'url';
+import mime from 'mime';
 
 import handler from 'serve-handler';
 import killport from 'kill-port';
 
-import { servers, ports } from './ports.mjs';
+import { port } from './ports.mjs';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -16,11 +17,19 @@ function createServer(base, port) {
         let publicPath = base;
         if (/haploid.(cjs|esm|system|umd).(min|dev).js(.map)?$/.test(url.pathname)) {
             publicPath = path.join(__dirname, '..', 'dist');
+            url.pathname = path.basename(url.pathname);
+            request.url = url.toString();
         }
+
+        const ext = path.extname(url.pathname).replace(/\./g, '');
+
+        const MIME = mime.getType(ext);
 
         await handler(request, response, {
             public: publicPath,
             etag: true,
+            cleanUrls: false,
+            trailingSlash: false,
             headers: [
                 {
                     source: '**/*',
@@ -28,6 +37,10 @@ function createServer(base, port) {
                         {
                             key: 'Cache-Control',
                             value: 'no-store',
+                        },
+                        {
+                            key: 'Content-Type',
+                            value: MIME,
                         },
                     ],
                 },
@@ -45,10 +58,6 @@ function createServer(base, port) {
     });
 }
 
-export const serverBooting = Promise.all(
-    servers.map(name =>
-        killport(ports[name])
-            .catch(() => {})
-            .then(() => createServer(path.join(__dirname, '..', 'e2e', name), ports[name]))
-    )
-);
+export const serverBooting = killport(port)
+    .catch(() => {})
+    .then(() => createServer(path.join(__dirname, '..', 'e2e'), port));
