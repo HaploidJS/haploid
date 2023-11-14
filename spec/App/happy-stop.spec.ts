@@ -11,7 +11,7 @@ describe.only(`happy-stop`, () => {
         });
         await app.start();
         await app.stop();
-        expect(fn).toBeCalledTimes(2);
+        expect(fn).toHaveBeenCalledTimes(2);
     });
 
     // 🚶 Walk through stop() logic
@@ -33,7 +33,7 @@ describe.only(`happy-stop`, () => {
 
         await app.stop(); // Will wait for updating to finish up
 
-        expect(afterUpdate).toBeCalled();
+        expect(afterUpdate).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately when LOAD_ERROR`, async () => {
@@ -55,7 +55,7 @@ describe.only(`happy-stop`, () => {
 
         app.stop().then(afterStop);
         await Promise.resolve();
-        expect(afterStop).toBeCalledTimes(1);
+        expect(afterStop).toHaveBeenCalledTimes(1);
     });
 
     it(`stop() resolved immediately when SKIP_BECAUSE_BROKEN`, async () => {
@@ -68,7 +68,7 @@ describe.only(`happy-stop`, () => {
         expect(app.state).toBe(AppState.SKIP_BECAUSE_BROKEN);
         app.stop().then(afterStop);
         await Promise.resolve();
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately when NOT_LOADED`, async () => {
@@ -78,7 +78,7 @@ describe.only(`happy-stop`, () => {
         app.stop().then(afterStop);
         await Promise.resolve();
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately NOT_BOOTSTRAPPED`, async () => {
@@ -92,7 +92,7 @@ describe.only(`happy-stop`, () => {
         app.stop().then(afterStop);
         await Promise.resolve();
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately when NOT_MOUTED`, async () => {
@@ -108,7 +108,7 @@ describe.only(`happy-stop`, () => {
         app.stop().then(afterStop);
         await Promise.resolve();
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately when LOADING_SOURCE_CODE`, async () => {
@@ -120,7 +120,7 @@ describe.only(`happy-stop`, () => {
         app.stop().then(afterStop);
         await Promise.resolve();
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() resolved immediately when BOOTSTRAPPING`, async () => {
@@ -134,7 +134,7 @@ describe.only(`happy-stop`, () => {
         app.stop().then(afterStop);
         await Promise.resolve();
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`stop() waits for starting to finish up`, async () => {
@@ -147,6 +147,6 @@ describe.only(`happy-stop`, () => {
         const stoppingPromise = app.stop(); // It must be going to stop now.
 
         await expect(stoppingPromise).resolves.toBeUndefined();
-        expect(afterStart).not.toBeCalled(); // stopping is fast, but still after starting finished
+        expect(afterStart).not.toHaveBeenCalled(); // stopping is fast, but still after starting finished
     });
 });

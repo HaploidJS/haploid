@@ -10,7 +10,7 @@ describe.only(`happy-start`, () => {
             bootstrap: [fn, fn],
         });
         await app.start();
-        expect(fn).toBeCalledTimes(2);
+        expect(fn).toHaveBeenCalledTimes(2);
     });
 
     it(`traverse all mount fns`, async () => {
@@ -19,7 +19,7 @@ describe.only(`happy-start`, () => {
             mount: [fn, fn],
         });
         await app.start();
-        expect(fn).toBeCalledTimes(2);
+        expect(fn).toHaveBeenCalledTimes(2);
     });
 
     // 🚶 Walk through start() logic
@@ -41,7 +41,7 @@ describe.only(`happy-start`, () => {
 
         await app.start(); // Will wait for updating to finish up
 
-        expect(update).toBeCalled(); // starting is fast, but still after updating finished
+        expect(update).toHaveBeenCalled(); // starting is fast, but still after updating finished
     });
 
     it(`start() waits for starting to finish up`, async () => {
@@ -54,7 +54,7 @@ describe.only(`happy-start`, () => {
 
         await app.start(); // Will wait for starting to finish up
 
-        expect(mount).toBeCalled(); // starting is fast, but still after previous starting finished
+        expect(mount).toHaveBeenCalled(); // starting is fast, but still after previous starting finished
     });
 
     it(`start() waits for stopping to be interrupted`, async () => {
@@ -67,7 +67,7 @@ describe.only(`happy-start`, () => {
 
         await app.start(); // Will wait for stopping to be interrupted
         await expect(stoppingPromise).rejects.toThrow(/interrupted/);
-        expect(unmount).not.toBeCalled(); // starting is fast, but still after stopping interrupted
+        expect(unmount).not.toHaveBeenCalled(); // starting is fast, but still after stopping interrupted
     });
 
     it(`start() waits for stopping to finish up`, async () => {
@@ -81,7 +81,7 @@ describe.only(`happy-start`, () => {
 
         await app.start(); // Will wait for stopping to finish up
         await expect(stoppingPromise).resolves.toBeUndefined();
-        expect(unmount).toBeCalled(); // starting is fast, but still after stopping finished
+        expect(unmount).toHaveBeenCalled(); // starting is fast, but still after stopping finished
     });
 
     it(`start() resolved immediately when MOUNTED`, async () => {
@@ -91,7 +91,7 @@ describe.only(`happy-start`, () => {
         await app.start(); // It must be in MOUNTED state
         app.start().then(afterStart);
         await Promise.resolve();
-        expect(afterStart).toBeCalled();
+        expect(afterStart).toHaveBeenCalled();
     });
 
     it(`start() load/bootstrap/mount immediately when LOAD_ERROR`, async () => {
@@ -127,8 +127,8 @@ describe.only(`happy-start`, () => {
         await expect(app.start()).rejects.toThrow();
         expect(app.state).toBe(AppState.LOAD_ERROR);
         await expect(app.start()).resolves.toBeUndefined();
-        expect(bootstrap).toBeCalled();
-        expect(mount).toBeCalled();
+        expect(bootstrap).toHaveBeenCalled();
+        expect(mount).toHaveBeenCalled();
     });
 
     it(`start() rejected immediately when SKIP_BECAUSE_BROKEN`, async () => {
@@ -140,7 +140,7 @@ describe.only(`happy-start`, () => {
         await app.start().catch(() => {}); // It must be in SKIP_BECAUSE_BROKEN state
         app.start().catch(afterStart);
         await Promise.resolve();
-        expect(afterStart).toBeCalled();
+        expect(afterStart).toHaveBeenCalled();
     });
 
     it(`start() load/bootstrap/mount when NOT_LOADED`, async () => {
@@ -159,11 +159,11 @@ describe.only(`happy-start`, () => {
         expect(app.state).toBe(AppState.NOT_LOADED);
         await app.start();
 
-        expect(afterLoad).toBeCalledTimes(1);
-        expect(afterBootstrap).toBeCalledTimes(1);
-        expect(afterMount).toBeCalledTimes(1);
-        expect(bootstrap).toBeCalledTimes(1);
-        expect(mount).toBeCalledTimes(1);
+        expect(afterLoad).toHaveBeenCalledTimes(1);
+        expect(afterBootstrap).toHaveBeenCalledTimes(1);
+        expect(afterMount).toHaveBeenCalledTimes(1);
+        expect(bootstrap).toHaveBeenCalledTimes(1);
+        expect(mount).toHaveBeenCalledTimes(1);
     });
 
     it(`start() bootstrap/mount when NOT_BOOTSTRAPPED`, async () => {
@@ -189,11 +189,11 @@ describe.only(`happy-start`, () => {
         expect(app.state).toBe(AppState.NOT_BOOTSTRAPPED);
         await app.start();
 
-        expect(afterLoad).toBeCalledTimes(1);
-        expect(afterBootstrap).toBeCalledTimes(1);
-        expect(afterMount).toBeCalledTimes(1);
-        expect(bootstrap).toBeCalledTimes(1);
-        expect(mount).toBeCalledTimes(1);
+        expect(afterLoad).toHaveBeenCalledTimes(1);
+        expect(afterBootstrap).toHaveBeenCalledTimes(1);
+        expect(afterMount).toHaveBeenCalledTimes(1);
+        expect(bootstrap).toHaveBeenCalledTimes(1);
+        expect(mount).toHaveBeenCalledTimes(1);
     });
 
     it(`start() mount when NOT_MOUTED`, async () => {
@@ -216,10 +216,10 @@ describe.only(`happy-start`, () => {
         expect(app.state).toBe(AppState.NOT_MOUNTED);
         await app.start();
 
-        expect(afterLoad).toBeCalledTimes(1);
-        expect(afterBootstrap).toBeCalledTimes(1);
-        expect(afterMount).toBeCalledTimes(1);
-        expect(bootstrap).toBeCalledTimes(1);
-        expect(mount).toBeCalledTimes(1);
+        expect(afterLoad).toHaveBeenCalledTimes(1);
+        expect(afterBootstrap).toHaveBeenCalledTimes(1);
+        expect(afterMount).toHaveBeenCalledTimes(1);
+        expect(bootstrap).toHaveBeenCalledTimes(1);
+        expect(mount).toHaveBeenCalledTimes(1);
     });
 });

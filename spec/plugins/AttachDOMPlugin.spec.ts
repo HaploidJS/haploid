@@ -64,17 +64,17 @@ describe.only(`AttachDOMPlugin`, () => {
         expect(app.appElement?.style.display).toBe('none');
         await app.start();
         await app.stop();
-        expect(mount).toBeCalledTimes(1);
-        expect(unmount).toBeCalledTimes(0);
-        expect(suspend).toBeCalledTimes(2);
-        expect(resume).toBeCalledTimes(1);
+        expect(mount).toHaveBeenCalledTimes(1);
+        expect(unmount).toHaveBeenCalledTimes(0);
+        expect(suspend).toHaveBeenCalledTimes(2);
+        expect(resume).toHaveBeenCalledTimes(1);
 
         await app.unload();
-        expect(unmount).toBeCalledTimes(1);
-        expect(suspend).toBeCalledTimes(2);
-        expect(resume).toBeCalledTimes(1);
-        expect(suspend).toBeCalledWith(expect.objectContaining({ name: 'foo', food: 'bread' }));
-        expect(resume).toBeCalledWith(expect.objectContaining({ name: 'foo', food: 'bread' }));
+        expect(unmount).toHaveBeenCalledTimes(1);
+        expect(suspend).toHaveBeenCalledTimes(2);
+        expect(resume).toHaveBeenCalledTimes(1);
+        expect(suspend).toHaveBeenCalledWith(expect.objectContaining({ name: 'foo', food: 'bread' }));
+        expect(resume).toHaveBeenCalledWith(expect.objectContaining({ name: 'foo', food: 'bread' }));
     });
 
     it(`useHiddenAttribute in keepAlive`, async () => {

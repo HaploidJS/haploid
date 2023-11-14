@@ -35,7 +35,7 @@ describe.only(`fallback-redirect`, () => {
         await delay(50);
         expect(location.pathname).toBe('/foo/bar');
 
-        expect(noAppActivated).not.toBeCalled(); // No noappactivated emitted.
+        expect(noAppActivated).not.toHaveBeenCalled(); // No noappactivated emitted.
     });
 
     it(`fallbackUrl as hash works`, async () => {
@@ -62,7 +62,7 @@ describe.only(`fallback-redirect`, () => {
         await delay(50);
         expect(location.hash).toBe('#/foo');
 
-        expect(noAppActivated).not.toBeCalled(); // No noappactivated emitted.
+        expect(noAppActivated).not.toHaveBeenCalled(); // No noappactivated emitted.
     });
 
     it(`fallbackUrl doesn't work if not match any app`, async () => {

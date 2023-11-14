@@ -11,11 +11,11 @@ describe.only(`emit-event`, () => {
         app.once('statechange', onceFn);
         await app.start();
         // NOT_LOADED =>LOADING_SOURCE_CODE=>NOT_BOOTSTRAPPED=>BOOTSTRAPPING=>NOT_MOUNTED=>MOUNTING=>MOUNTED
-        expect(fn).toBeCalledTimes(6);
-        expect(onceFn).toBeCalledTimes(1);
+        expect(fn).toHaveBeenCalledTimes(6);
+        expect(onceFn).toHaveBeenCalledTimes(1);
         app.off('statechange', fn);
         await app.stop();
-        expect(fn).toBeCalledTimes(6); // still
+        expect(fn).toHaveBeenCalledTimes(6); // still
     });
 
     it(`emit beforeload/afterload`, async () => {
@@ -25,8 +25,8 @@ describe.only(`emit-event`, () => {
         app.on('beforeload', beforeload);
         app.on('afterload', afterload);
         await app.load().catch(e => e);
-        expect(beforeload).toBeCalledTimes(1);
-        expect(afterload).toBeCalledTimes(1);
+        expect(beforeload).toHaveBeenCalledTimes(1);
+        expect(afterload).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeload/loaderror`, async () => {
@@ -39,8 +39,8 @@ describe.only(`emit-event`, () => {
         app.on('beforeload', beforeload);
         app.on('loaderror', loaderror);
         await app.load().catch(e => e);
-        expect(beforeload).toBeCalledTimes(1);
-        expect(loaderror).toBeCalledTimes(1);
+        expect(beforeload).toHaveBeenCalledTimes(1);
+        expect(loaderror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforestart/afterstart`, async () => {
@@ -50,8 +50,8 @@ describe.only(`emit-event`, () => {
         app.on('beforestart', beforestart).on('afterstart', afterstart);
         await app.start();
 
-        expect(beforestart).toBeCalledTimes(1);
-        expect(afterstart).toBeCalledTimes(1);
+        expect(beforestart).toHaveBeenCalledTimes(1);
+        expect(afterstart).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforestart/starterror`, async () => {
@@ -63,8 +63,8 @@ describe.only(`emit-event`, () => {
         app.on('beforestart', beforestart).on('starterror', starterror);
         await expect(app.start()).rejects.toThrow();
 
-        expect(beforestart).toBeCalledTimes(1);
-        expect(starterror).toBeCalledTimes(1);
+        expect(beforestart).toHaveBeenCalledTimes(1);
+        expect(starterror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforestop/afterstop`, async () => {
@@ -75,8 +75,8 @@ describe.only(`emit-event`, () => {
         await app.start();
         await app.stop();
 
-        expect(beforestop).toBeCalledTimes(1);
-        expect(afterstop).toBeCalledTimes(1);
+        expect(beforestop).toHaveBeenCalledTimes(1);
+        expect(afterstop).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforestop/stoperror`, async () => {
@@ -89,8 +89,8 @@ describe.only(`emit-event`, () => {
         await app.start();
         await expect(app.stop()).rejects.toThrow();
 
-        expect(beforestop).toBeCalledTimes(1);
-        expect(stoperror).toBeCalledTimes(1);
+        expect(beforestop).toHaveBeenCalledTimes(1);
+        expect(stoperror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeupdate/afterupdate`, async () => {
@@ -103,8 +103,8 @@ describe.only(`emit-event`, () => {
         await app.start();
         await app.update({});
 
-        expect(beforeupdate).toBeCalledTimes(1);
-        expect(afterupdate).toBeCalledTimes(1);
+        expect(beforeupdate).toHaveBeenCalledTimes(1);
+        expect(afterupdate).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeupdate/updateerror`, async () => {
@@ -117,8 +117,8 @@ describe.only(`emit-event`, () => {
         await app.start();
         await expect(app.update({})).rejects.toThrow();
 
-        expect(beforeupdate).toBeCalledTimes(1);
-        expect(updateerror).toBeCalledTimes(1);
+        expect(beforeupdate).toHaveBeenCalledTimes(1);
+        expect(updateerror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit throws won't break down`, async () => {

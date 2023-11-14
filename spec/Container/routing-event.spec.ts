@@ -55,7 +55,7 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/bar/about');
         await delay(0);
 
-        expect(onPopstate).toBeCalledTimes(2);
+        expect(onPopstate).toHaveBeenCalledTimes(2);
 
         await container.destroy();
 
@@ -107,7 +107,7 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/baz');
         await delay(200);
 
-        expect(onPopstate).toBeCalledTimes(1);
+        expect(onPopstate).toHaveBeenCalledTimes(1);
         expect(container.currentMountedApp?.name).toBe('bar');
         await container.destroy();
         window.removeEventListener('popstate', onPopstate);
@@ -158,7 +158,7 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/baz');
         await delay(200);
 
-        expect(onPopstate).toBeCalledTimes(1);
+        expect(onPopstate).toHaveBeenCalledTimes(1);
         expect(container.currentMountedApp?.name).toBe('bar');
         await container.destroy();
         window.removeEventListener('popstate', onPopstate);
@@ -209,7 +209,7 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/baz');
         await delay(200);
 
-        expect(onPopstate).toBeCalledTimes(1);
+        expect(onPopstate).toHaveBeenCalledTimes(1);
         expect(container.currentMountedApp?.name).toBe('baz');
         await container.destroy();
         window.removeEventListener('popstate', onPopstate);
@@ -260,7 +260,7 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/baz');
         await delay(200);
 
-        expect(onPopstate).toBeCalledTimes(1);
+        expect(onPopstate).toHaveBeenCalledTimes(1);
         expect(container.currentMountedApp?.name).toBe('baz');
         await container.destroy();
         window.removeEventListener('popstate', onPopstate);
@@ -378,8 +378,8 @@ describe.only(`routing-event`, () => {
         navigateToUrl('/bar');
         await delay(100);
 
-        expect(bootstrapA).toBeCalledTimes(0);
-        expect(onPopstate).toBeCalledTimes(0);
+        expect(bootstrapA).toHaveBeenCalledTimes(0);
+        expect(onPopstate).toHaveBeenCalledTimes(0);
         expect(containerA.currentMountedApp?.name).toBeUndefined();
         expect(containerB.currentMountedApp?.name).toBeUndefined();
 

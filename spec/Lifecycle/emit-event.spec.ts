@@ -10,8 +10,8 @@ describe.only(`emit-event`, () => {
 
         await lifecycle.bootstrap();
 
-        expect(beforebootstrap).toBeCalledTimes(1);
-        expect(afterbootstrap).toBeCalledTimes(1);
+        expect(beforebootstrap).toHaveBeenCalledTimes(1);
+        expect(afterbootstrap).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforebootstrap/bootstraperror`, async () => {
@@ -25,8 +25,8 @@ describe.only(`emit-event`, () => {
 
         await expect(lifecycle.bootstrap()).rejects.toThrow();
 
-        expect(beforebootstrap).toBeCalledTimes(1);
-        expect(bootstraperror).toBeCalledTimes(1);
+        expect(beforebootstrap).toHaveBeenCalledTimes(1);
+        expect(bootstraperror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforemount/aftermount`, async () => {
@@ -38,8 +38,8 @@ describe.only(`emit-event`, () => {
 
         await lifecycle.mount();
 
-        expect(beforemount).toBeCalledTimes(1);
-        expect(aftermount).toBeCalledTimes(1);
+        expect(beforemount).toHaveBeenCalledTimes(1);
+        expect(aftermount).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforemount/mounterror`, async () => {
@@ -52,8 +52,8 @@ describe.only(`emit-event`, () => {
         lifecycle.on('mounterror', mounterror);
 
         await expect(lifecycle.mount()).rejects.toThrow();
-        expect(beforemount).toBeCalledTimes(1);
-        expect(mounterror).toBeCalledTimes(1);
+        expect(beforemount).toHaveBeenCalledTimes(1);
+        expect(mounterror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeunmount/afterunmount`, async () => {
@@ -65,8 +65,8 @@ describe.only(`emit-event`, () => {
 
         await lifecycle.unmount();
 
-        expect(beforeunmount).toBeCalledTimes(1);
-        expect(afterunmount).toBeCalledTimes(1);
+        expect(beforeunmount).toHaveBeenCalledTimes(1);
+        expect(afterunmount).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeunmount/unmounterror`, async () => {
@@ -80,8 +80,8 @@ describe.only(`emit-event`, () => {
 
         await expect(lifecycle.unmount()).rejects.toThrow();
 
-        expect(beforeunmount).toBeCalledTimes(1);
-        expect(unmounterror).toBeCalledTimes(1);
+        expect(beforeunmount).toHaveBeenCalledTimes(1);
+        expect(unmounterror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeupdate/afterupdate`, async () => {
@@ -95,8 +95,8 @@ describe.only(`emit-event`, () => {
 
         await lifecycle.update({});
 
-        expect(beforeupdate).toBeCalledTimes(1);
-        expect(afterupdate).toBeCalledTimes(1);
+        expect(beforeupdate).toHaveBeenCalledTimes(1);
+        expect(afterupdate).toHaveBeenCalledTimes(1);
     });
 
     it(`emit beforeupdate/updateerror`, async () => {
@@ -115,8 +115,8 @@ describe.only(`emit-event`, () => {
         // props in Error
         expect(Reflect.get(err, 'props')).toBe(updateProps);
 
-        expect(beforeupdate).toBeCalledTimes(1);
-        expect(updateerror).toBeCalledTimes(1);
+        expect(beforeupdate).toHaveBeenCalledTimes(1);
+        expect(updateerror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit throws won't break down`, async () => {

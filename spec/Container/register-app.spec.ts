@@ -126,7 +126,7 @@ describe.only(`register-app`, () => {
 
         await delay(10);
 
-        expect(onAppActivated).toBeCalledTimes(1);
+        expect(onAppActivated).toHaveBeenCalledTimes(1);
         expect(container.currentMountedApp?.name).toBe('foo'); // match foo
     });
 

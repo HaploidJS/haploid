@@ -21,8 +21,8 @@ describe.only(`emit-event`, () => {
             navigateToUrl(_);
         }
 
-        expect(onDeadloopDetected).toBeCalledTimes(1);
-        expect(onDeadloopDetectedOnce).toBeCalledTimes(1);
+        expect(onDeadloopDetected).toHaveBeenCalledTimes(1);
+        expect(onDeadloopDetectedOnce).toHaveBeenCalledTimes(1);
 
         getUniversalRouter().off('deadloopdetect', onDeadloopDetected);
     });

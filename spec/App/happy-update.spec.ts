@@ -13,7 +13,7 @@ describe.only(`happy-update`, () => {
         });
         await app.start();
         await app.update({});
-        expect(fn).toBeCalledTimes(2);
+        expect(fn).toHaveBeenCalledTimes(2);
     });
 
     // 🚶 Walk through update() logic
@@ -34,7 +34,7 @@ describe.only(`happy-update`, () => {
         await delay(50);
         await app.update({});
 
-        expect(afterUpdate).toBeCalled();
+        expect(afterUpdate).toHaveBeenCalled();
     });
 
     it(`update() waits for starting to be finished`, async () => {
@@ -47,7 +47,7 @@ describe.only(`happy-update`, () => {
         await delay(50);
         await app.update({});
 
-        expect(afterStart).toBeCalled();
+        expect(afterStart).toHaveBeenCalled();
     });
 
     it(`update() waits for stopping to be finished`, async () => {
@@ -60,7 +60,7 @@ describe.only(`happy-update`, () => {
         await delay(50);
         await app.update({}).catch(() => {});
 
-        expect(afterStop).toBeCalled();
+        expect(afterStop).toHaveBeenCalled();
     });
 
     it(`update() rejected when NOT_LOADED`, async () => {
@@ -114,7 +114,7 @@ describe.only(`happy-update`, () => {
 
         app.update({}).catch(afterUpdate);
         await Promise.resolve();
-        expect(afterUpdate).toBeCalledTimes(1);
+        expect(afterUpdate).toHaveBeenCalledTimes(1);
     });
 
     it(`update() rejected when SKIP_BECAUSE_BROKEN`, async () => {

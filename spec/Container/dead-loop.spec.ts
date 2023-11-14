@@ -57,7 +57,7 @@ describe.only(`dead-loop`, () => {
         await delay(200);
 
         expect(j).toBeLessThanOrEqual(20);
-        expect(onDeadloopDetected).toBeCalledTimes(1);
+        expect(onDeadloopDetected).toHaveBeenCalledTimes(1);
 
         removeRoot(appA);
         removeRoot(appB);

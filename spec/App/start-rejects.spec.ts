@@ -82,7 +82,7 @@ describe.only(`start-rejects`, () => {
         await delay(150);
         app.stop();
 
-        expect(unmount).toBeCalled();
+        expect(unmount).toHaveBeenCalled();
     });
 
     it(`start() cancelled if topTask is stop`, async () => {

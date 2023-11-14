@@ -20,8 +20,8 @@ describe.only(`emit-event`, () => {
 
         await container.destroy();
 
-        expect(onDestroying).toBeCalledTimes(1);
-        expect(onDestroyed).toBeCalledTimes(1);
+        expect(onDestroying).toHaveBeenCalledTimes(1);
+        expect(onDestroyed).toHaveBeenCalledTimes(1);
     });
 
     it(`emit appactivateerror in ManualContainer`, async () => {
@@ -36,10 +36,10 @@ describe.only(`emit-event`, () => {
         container.on('noappactivated', onAppActivated);
 
         await expect(container.activateApp('foo')).rejects.toThrow(/cannot find/);
-        expect(onAppActivateError).toBeCalledTimes(1);
+        expect(onAppActivateError).toHaveBeenCalledTimes(1);
 
         await expect(container.activateApp(null)).resolves.toBeNull();
-        expect(onAppActivated).toBeCalledTimes(1);
+        expect(onAppActivated).toHaveBeenCalledTimes(1);
     });
 
     it(`emit noappactivated(repeatly) in RouterContainer`, async () => {
@@ -54,15 +54,15 @@ describe.only(`emit-event`, () => {
         container.run();
 
         await delay(10); // no active
-        expect(noAppActivated).toBeCalledTimes(1);
+        expect(noAppActivated).toHaveBeenCalledTimes(1);
 
         navigateToUrl('/'); // no active
         await delay(10);
-        expect(noAppActivated).toBeCalledTimes(2);
+        expect(noAppActivated).toHaveBeenCalledTimes(2);
 
         location.hash = 'hash'; // no active
         await delay(10);
-        expect(noAppActivated).toBeCalledTimes(4); // emit again, hashchange=>popstate
+        expect(noAppActivated).toHaveBeenCalledTimes(4); // emit again, hashchange=>popstate
     });
 
     it(`emit appactivating/appactivated/appactivateerror`, async () => {
@@ -122,7 +122,7 @@ describe.only(`emit-event`, () => {
         await expect(container.activateApp('baz')).rejects.toThrow(/cannot find/);
         expect(activateerrorApp).toBe('baz');
 
-        expect(onAppActivatedOnce).toBeCalledTimes(1);
+        expect(onAppActivatedOnce).toHaveBeenCalledTimes(1);
     });
 
     it('activating conflicts eat events', async () => {
@@ -176,15 +176,15 @@ describe.only(`emit-event`, () => {
         const activatingBarPromise = container.activateApp('bar');
         await expect(activatingFooPromise).rejects.toThrow(/interrupted by bar/);
         await expect(activatingBarPromise).resolves.toStrictEqual(barApp);
-        expect(onAppactivating).toBeCalledTimes(2);
-        expect(onAppactivated).toBeCalledTimes(1);
+        expect(onAppactivating).toHaveBeenCalledTimes(2);
+        expect(onAppactivated).toHaveBeenCalledTimes(1);
 
         const activatingMoonPromise = container.activateApp('moon');
         const activatingSunPromise = container.activateApp('sun');
         await expect(activatingMoonPromise).rejects.toThrow(/interrupted by sun/);
         await expect(activatingSunPromise).rejects.toThrow('mock error');
-        expect(onAppactivating).toBeCalledTimes(4);
-        expect(onAppactivaterrror).toBeCalledTimes(1);
+        expect(onAppactivating).toHaveBeenCalledTimes(4);
+        expect(onAppactivaterrror).toHaveBeenCalledTimes(1);
     });
 
     it(`emit throws won't break down`, async () => {
@@ -228,6 +228,6 @@ describe.only(`emit-event`, () => {
             },
         });
 
-        expect(onAppregistererror).toBeCalledTimes(1);
+        expect(onAppregistererror).toHaveBeenCalledTimes(1);
     });
 });

@@ -115,7 +115,7 @@ describe.only(`happy-consume`, () => {
         navigateToUrl('/foo');
         await delay(0);
 
-        expect(popstate).not.toBeCalled();
+        expect(popstate).not.toHaveBeenCalled();
 
         router.unregisterConsumer(resumer);
 
@@ -142,8 +142,8 @@ describe.only(`happy-consume`, () => {
         await delay(0);
         location.hash = '#foo';
         await delay(0);
-        expect(popstate).toBeCalledTimes(2); // hashchange => popstate
-        expect(hashchange).toBeCalledTimes(1);
+        expect(popstate).toHaveBeenCalledTimes(2); // hashchange => popstate
+        expect(hashchange).toHaveBeenCalledTimes(1);
 
         router.unregisterConsumer(resumer);
         window.removeEventListener('popstate', popstate);
@@ -190,7 +190,7 @@ describe.only(`happy-consume`, () => {
         // /foo is cancelled, ignore its event.
         // /bar is hanged, treat it as passed.
         // /baz is leaked, but its event can still be flushed.
-        expect(popstate).toBeCalledTimes(3);
+        expect(popstate).toHaveBeenCalledTimes(3);
 
         router.unregisterConsumer(resumer);
         window.removeEventListener('popstate', popstate);
