@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import EventEmitter from 'eventemitter3';
 
 import { SyncBailHook, AsyncSeriesHook, AsyncSeriesBailHook, AsyncSeriesWaterfallHook } from './tapable/index';
@@ -1030,13 +1029,29 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
         this.#unloadingPromise = promiseIgnoreCatch(this.hooks.beforeunload.promise())
             .then(() => {
                 this.debug('Start unloading.');
-                const lastLifecycleFn = this.lifecycle.history[this.lifecycle.history.length - 1];
+                let needUnmount = false;
+                const history = this.lifecycle.history;
+                for (let i = history.length - 1; i >= 0; --i) {
+                    const item = history[i];
+                    if (item.name === 'unmount' && item.status === 'success') {
+                        break;
+                    }
+
+                    if (item.name === 'mount') {
+                        // If ever mount, unmount anyway
+                        needUnmount = true;
+                        break;
+                    }
+                }
+
                 this.#state = AppState.UNLOADING;
                 return promiseIgnoreCatch(
                     reasonableTime(
                         // Don't call unmount duplicatly.
-                        lastLifecycleFn && lastLifecycleFn.name === 'unmount' && lastLifecycleFn.status === 'success'
-                            ? Promise.resolve()
+                        !needUnmount
+                            ? Promise.resolve().then(() => {
+                                  debug('Unmount is not necessary when unloading.');
+                              })
                             : this.#lifecycle.unmount(),
                         this.timeouts.unmount,
                         `${this} unmounting timeout of %dms.`

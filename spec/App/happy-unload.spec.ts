@@ -33,7 +33,7 @@ describe.only(`happy-unload`, () => {
         });
         await app.start();
         await app.unload();
-        expect(fn).toBeCalledTimes(2);
+        expect(fn).toHaveBeenCalledTimes(2);
     });
 
     // 🚶 Walk through unload() logic
@@ -49,7 +49,7 @@ describe.only(`happy-unload`, () => {
 
         await app.unload(); // Will wait for updating to be finished
 
-        expect(afterUpdate).toBeCalled();
+        expect(afterUpdate).toHaveBeenCalled();
     });
 
     it(`unload() waits for starting to be finished`, async () => {
@@ -62,7 +62,7 @@ describe.only(`happy-unload`, () => {
         const unloadingPromise = app.unload(); // It must be going to unload now.
 
         await expect(unloadingPromise).resolves.toBeUndefined();
-        expect(afterStart).not.toBeCalled(); // unloading is fast, but still after starting finished
+        expect(afterStart).not.toHaveBeenCalled(); // unloading is fast, but still after starting finished
     });
 
     it(`unload() waits for stopping to be finished`, async () => {
@@ -76,7 +76,7 @@ describe.only(`happy-unload`, () => {
         const unloadingPromise = app.unload(); // It must be going to unload now.
 
         await expect(unloadingPromise).resolves.toBeUndefined();
-        expect(afterStop).not.toBeCalled();
+        expect(afterStop).not.toHaveBeenCalled();
     });
 
     it(`unload() waits for unloading to be finished`, async () => {
@@ -90,10 +90,10 @@ describe.only(`happy-unload`, () => {
         const unloadingPromise = app.unload(); // It must be going to unload now.
 
         await expect(unloadingPromise).resolves.toBeUndefined();
-        expect(afterUnload).not.toBeCalled();
+        expect(afterUnload).not.toHaveBeenCalled();
     });
 
-    it(`unload() won't call unmount if not necessary`, async () => {
+    it(`unload() won't call unmount if alreay unmounted`, async () => {
         const afterUnload = jest.fn();
         const app = createApp({
             unmount: (): Promise<void> => afterUnload(),
@@ -101,6 +101,29 @@ describe.only(`happy-unload`, () => {
         await app.start();
         await app.stop();
         await app.unload();
-        expect(afterUnload).toBeCalledTimes(1);
+        expect(afterUnload).toHaveBeenCalledTimes(1);
+    });
+
+    it(`unload() won't call unmount if not ever mounted`, async () => {
+        const afterUnload = jest.fn();
+        const app = createApp({
+            unmount: (): Promise<void> => afterUnload(),
+        });
+        await app.unload();
+        expect(afterUnload).toHaveBeenCalledTimes(0);
+    });
+
+    it(`unload() still call unmount if ever unmounted failed`, async () => {
+        const afterUnload = jest.fn();
+        const app = createApp({
+            unmount: (): Promise<void> => {
+                afterUnload();
+                return Promise.reject();
+            },
+        });
+        await app.start();
+        await app.stop().catch(() => {});
+        await app.unload();
+        expect(afterUnload).toHaveBeenCalledTimes(2);
     });
 });
