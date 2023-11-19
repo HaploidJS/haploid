@@ -1,11 +1,11 @@
-import { getUniversalUmdExportResolver } from '@/UmdExportResolver';
+import { getUniversalGlobalExportResolver } from '@/GlobalExportResolver';
 import { uuid } from '../test-utils';
 
 describe.only('resolve', () => {
     it('resolved', async () => {
         const key = uuid();
 
-        const resolvedKey = getUniversalUmdExportResolver().resolve(() => {
+        const resolvedKey = getUniversalGlobalExportResolver().resolve(() => {
             Reflect.set(window, key, 1);
         }, `${key}.js`);
 
@@ -15,17 +15,17 @@ describe.only('resolve', () => {
     it('return undefined if resolved failed', async () => {
         const key = uuid();
 
-        expect(getUniversalUmdExportResolver().resolve(() => {}, `${key}.js`)).toBe(undefined);
+        expect(getUniversalGlobalExportResolver().resolve(() => {}, `${key}.js`)).toBe(undefined);
     });
 
     it('resolved repeatly if src equals', async () => {
         const key = uuid();
 
-        const resolvedKey1 = getUniversalUmdExportResolver().resolve(() => {
+        const resolvedKey1 = getUniversalGlobalExportResolver().resolve(() => {
             Reflect.set(window, key, 1);
         }, `${key}.js`);
 
-        const resolvedKey2 = getUniversalUmdExportResolver().resolve(() => {
+        const resolvedKey2 = getUniversalGlobalExportResolver().resolve(() => {
             Reflect.set(window, key, 1);
         }, `${key}.js`);
 
@@ -36,12 +36,12 @@ describe.only('resolve', () => {
     it('resolved repeatly failed if src not equals', async () => {
         const key = uuid();
 
-        getUniversalUmdExportResolver().resolve(() => {
+        getUniversalGlobalExportResolver().resolve(() => {
             Reflect.set(window, key, 1);
         }, `${key}.js`);
 
         expect(
-            getUniversalUmdExportResolver().resolve(() => {
+            getUniversalGlobalExportResolver().resolve(() => {
                 Reflect.set(window, key, 1);
             }, `${key}-2.js`)
         ).toBe(undefined);
