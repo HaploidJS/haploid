@@ -66,7 +66,7 @@ function bootstrap() {
     );
 }
 
-window[Date.now().toString(36)] = {
+module.exports = {
     bootstrap,
     mount({ domElement }) {
         domElement.innerHTML = `

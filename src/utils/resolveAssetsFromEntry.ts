@@ -44,7 +44,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
     }
 
     if (entryPathname.endsWith('.js')) {
-        debug('Treat %s as a JS UMD entry.', entry);
+        debug('Treat %s as a non-module JS entry.', entry);
         return {
             isJS: true,
             styles: [],
@@ -57,7 +57,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
     }
 
     if (entryPathname.endsWith('.mjs')) {
-        debug('Treat %s as a JS ESM entry.', entry);
+        debug('Treat %s as a module JS entry.', entry);
         return {
             isJS: true,
             styles: [],
@@ -198,7 +198,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
                         /import.meta may only appear in a module/,
                     ].find(reg => reg.test((err as SyntaxError).message))
                 ) {
-                    debug('Detected a JavaScript ESM entry: %s.', entry);
+                    debug('Detected a ESM JavaScript entry: %s.', entry);
                     return {
                         isJS: true,
                         styles: [],
@@ -212,7 +212,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
                 }
             }
 
-            debug('Detected a JavaScript UMD entry: %s.', entry);
+            debug('Detected a non-ESM JavaScript entry: %s.', entry);
             return {
                 isJS: true,
                 lastModified,

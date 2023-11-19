@@ -42,14 +42,14 @@ class GlobalExportResolver extends Debugger {
         return GlobalExportResolver.#instance;
     }
 
-    public resolve(evalScript: () => unknown, src: string, global: Window = window): keyof Window | undefined {
+    public resolve(evalScript: () => unknown, src: string, global: Window = window): keyof Window {
         this.debug('Call resolveUnsafe(%o, %s, window)', evalScript, src);
 
         noteGlobalProps(global);
 
         evalScript();
 
-        let entryName = getGlobalProp(global) as keyof Window | undefined;
+        let entryName = getGlobalProp(global) as keyof Window;
 
         let srcKey = '';
         let cachedKey: keyof Window | undefined = undefined;
@@ -81,18 +81,18 @@ class GlobalExportResolver extends Debugger {
                 this.debug('Use cached key %s for %s.', cachedKey, src);
                 entryName = cachedKey;
             } else {
-                return;
+                throw Error(`Cannot find global exported object in ${src}.`);
             }
         }
 
         if (cachedKey && cachedKey !== entryName) {
             console.warn(
-                `The resolved UMD exported key "${entryName}" does not equal with previously cached "${cachedKey}" from "${src}".`
+                `The resolved global exported key "${entryName}" does not equal with previously cached "${cachedKey}" from "${src}".`
             );
         }
 
         if (!global[entryName]) {
-            throw Error(`Cannot find UMD exported object in ${src}.`);
+            throw Error(`Cannot find global exported object in ${src}.`);
         }
 
         if (srcKey) {

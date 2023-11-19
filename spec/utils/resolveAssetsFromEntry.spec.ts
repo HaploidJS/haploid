@@ -1,7 +1,7 @@
 import { resolveAssetsFromEntry } from '@/utils/resolveAssetsFromEntry';
 
 describe('resolveAssetsFromEntry by ways', () => {
-    it('resolved a UMD entry by extension=.js', async () => {
+    it('resolved a non-ESM entry by extension=.js', async () => {
         const { isJS, styles, scripts } = await resolveAssetsFromEntry({
             url: '/a.js',
         });

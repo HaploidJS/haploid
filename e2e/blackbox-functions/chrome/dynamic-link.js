@@ -71,7 +71,7 @@ function hasRightStyleSibling(node) {
     return sb.nodeName === 'STYLE' && sb.textContent.includes('.success-dynamic-link');
 }
 
-window[Date.now().toString(36)] = {
+module.exports = {
     bootstrap,
     mount({ domElement }) {
         domElement.innerHTML = `

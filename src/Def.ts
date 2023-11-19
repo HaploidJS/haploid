@@ -12,6 +12,8 @@ export type KeepAlive =
 
 export type IgnoreAsset = RegExp | Array<RegExp | ((src: string) => boolean)> | ((src: string) => boolean);
 
+export type JSExportType = 'global' | 'esm' | 'module' | 'umd';
+
 export type AppEntry = {
     url: string;
     retries?: number;
@@ -168,6 +170,7 @@ export interface ChromeOptionsFromSettingOnly {
     urlRewrite?: (url: string) => string;
     /** If true, URL is fixed only by regular expression in CSS. */
     dropURLFixInCSSByStyleSheet?: boolean;
+    jsExportType?: JSExportType;
 }
 
 export interface ChromeOptionsFromResolvingOrSetting {

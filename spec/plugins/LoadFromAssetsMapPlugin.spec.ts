@@ -22,6 +22,7 @@ describe.only('LoadFromAssetsMapPlugin', () => {
                     js: [jsUrl],
                 },
             },
+            jsExportType: 'global',
         });
 
         createLoadFromAssetsMapPlugin()({
@@ -50,6 +51,7 @@ describe.only('LoadFromAssetsMapPlugin', () => {
                     js: [jsUrl],
                 },
             },
+            jsExportType: 'global',
             ignoreAsset: (src: string): boolean => /404/.test(src),
         });
 

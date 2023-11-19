@@ -5,4 +5,4 @@ function unmount({ domElement }) {
     domElement.innerHTML = '';
 }
 
-window[Math.random()] = { mount, unmount };
+module.exports = { mount, unmount };
