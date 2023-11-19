@@ -42,14 +42,14 @@ class UmdExportResolver extends Debugger {
         return UmdExportResolver.#instance;
     }
 
-    public resolve(evalScript: () => unknown, src: string, global: Window = window): keyof Window {
+    public resolve(evalScript: () => unknown, src: string, global: Window = window): keyof Window | undefined {
         this.debug('Call resolveUnsafe(%o, %s, window)', evalScript, src);
 
         noteGlobalProps(global);
 
         evalScript();
 
-        let entryName = getGlobalProp(global) as keyof Window;
+        let entryName = getGlobalProp(global) as keyof Window | undefined;
 
         let srcKey = '';
         let cachedKey: keyof Window | undefined = undefined;
@@ -81,7 +81,7 @@ class UmdExportResolver extends Debugger {
                 this.debug('Use cached key %s for %s.', cachedKey, src);
                 entryName = cachedKey;
             } else {
-                throw Error(`Cannot find UMD exported object in ${src}.`);
+                return;
             }
         }
 

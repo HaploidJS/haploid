@@ -20,6 +20,9 @@ export class Chrome extends Debugger {
 
     readonly #windowShadow: WindowShadow;
     readonly #esEngine: ESEngine;
+    readonly #evalEnv: Record<PropertyKey, unknown> & { module: { exports: unknown } };
+
+    readonly #originalExports = {};
 
     #isClosed = false;
 
@@ -29,10 +32,24 @@ export class Chrome extends Debugger {
 
         const sandbox = parseSandbox(options.sandbox);
 
+        const exports = this.#originalExports;
+        const module = { exports };
+
+        const require = (key: string): void => {
+            this.debug('Call require(%s).', key);
+        };
+
+        const env = (this.#evalEnv = {
+            ...options.envVariables,
+            module,
+            exports,
+            require,
+        });
+
         this.#windowShadow = sandbox
             ? new WindowNode(
                   options.name,
-                  options.envVariables ?? {},
+                  env,
                   /* document options */
                   {
                       ...sandbox,
@@ -42,7 +59,7 @@ export class Chrome extends Debugger {
                   /* window options */
                   sandbox
               )
-            : new RawWindowNode(options.envVariables ?? {});
+            : new RawWindowNode(env);
 
         this.headElement.appendChild(PresetDOMParser.parseHeadElement(options.presetHeadHTML ?? ''));
 
@@ -244,6 +261,13 @@ export class Chrome extends Debugger {
             entry.src || entry.content,
             this.window
         );
+
+        if (this.#evalEnv.module.exports !== this.#originalExports) {
+            // exports has been set!
+            return this.#evalEnv.module.exports as LifecycleFns<CustomProps>;
+        }
+
+        if (!entryKey) throw Error(`Cannot find UMD exported object in ${entry.src || entry.content}.`);
 
         return this.window[entryKey];
     }

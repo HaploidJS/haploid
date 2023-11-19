@@ -601,6 +601,20 @@ describe.only('Chrome', () => {
             const mounts = toArray(lf.mount);
             expect(mounts[0]({ name: 'foo' })).toEqual([1, 2]);
         });
+
+        it('resolve UMD exports', async () => {
+            const lf = await chrome.open({
+                styles: [],
+                scripts: [
+                    new ScriptNode({
+                        content: `if(typeof exports === 'object' && typeof module === 'object')module.exports = {mount(){return 789},unmount(){}}`,
+                    }),
+                ],
+            });
+
+            const mounts = toArray(lf.mount);
+            expect(mounts[0]({ name: 'foo' })).toEqual(789);
+        });
     });
 
     describe('resource timeout and reties', () => {
