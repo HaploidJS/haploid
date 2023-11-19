@@ -1,4 +1,4 @@
-import { getUniversalUmdExportResolver } from '../UmdExportResolver';
+import { getUniversalGlobalExportResolver } from '../GlobalExportResolver';
 import { WindowNode, RawWindowNode, WindowShadow } from './BOM/';
 import { ElementNode, ScriptNode, StyleNode } from '../node/';
 import type { ChromeOptions, LifecycleFns, ResourceFetchingOptions } from '../Def';
@@ -256,7 +256,7 @@ export class Chrome extends Debugger {
             return exported;
         }
 
-        const entryKey = getUniversalUmdExportResolver().resolve(
+        const entryKey = getUniversalGlobalExportResolver().resolve(
             () => this.#execScriptNode(entry),
             entry.src || entry.content,
             this.window

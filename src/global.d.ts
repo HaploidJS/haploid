@@ -1,5 +1,5 @@
 import type { Router } from './Router';
-import type { UmdExportResolver } from './UmdExportResolver';
+import type { GlobalExportResolver } from './GlobalExportResolver';
 import type { DevTool } from './DevTool';
 import type { Downloader } from './Downloader';
 import type { Atomic } from './Atomic';
@@ -10,7 +10,7 @@ declare global {
         __HAPLOID_MAX_LOAD_CONCURRENCY__?: number;
         __HAPLOID_MAP__: Map<PropertyKey, Map<unknown, unknown>>;
         __HAPLOID_ROUTER__: Router;
-        __HAPLOID_UMD_EXPORT_RESOLVER__: UmdExportResolver;
+        __HAPLOID_GLOBAL_EXPORT_RESOLVER__: GlobalExportResolver;
         __HAPLOID_DEV_TOOL__: DevTool;
         __HAPLOID_DOWNLOADER__: Downloader;
         __HAPLOID_ATOMIC__: Atomic;

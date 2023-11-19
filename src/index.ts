@@ -39,7 +39,7 @@ export { AssetsModule, AssetsMap, FullAssetsMap } from './AssetsMap';
 export { getUniversalDevTool, DevTool } from './DevTool';
 export { Atomic, getUniversalAtomic } from './Atomic';
 export { getUniversalRouter, Router } from './Router';
-export { getUniversalUmdExportResolver, UmdExportResolver } from './UmdExportResolver';
+export { getUniversalGlobalExportResolver, GlobalExportResolver } from './GlobalExportResolver';
 
 export { registerWebComponents } from './web-components';
 export type { ParsedAppOptions, AppElement, ContainerElement } from './web-components';

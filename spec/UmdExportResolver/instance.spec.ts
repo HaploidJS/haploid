@@ -1,7 +1,7 @@
-import { getUniversalUmdExportResolver } from '@/UmdExportResolver';
+import { getUniversalGlobalExportResolver } from '@/GlobalExportResolver';
 
 describe.only('instance', () => {
-    it(`toString() is "[object UmdExportResolver]"`, async () => {
-        expect({}.toString.call(getUniversalUmdExportResolver())).toBe('[object UmdExportResolver]');
+    it(`toString() is "[object GlobalExportResolver]"`, async () => {
+        expect({}.toString.call(getUniversalGlobalExportResolver())).toBe('[object GlobalExportResolver]');
     });
 });

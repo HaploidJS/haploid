@@ -1,7 +1,7 @@
 import {
-    __HAPLOID_UMD_EXPORT_RESOLVER__,
-    __HAPLOID_GLOBAL_MAP_UMD_EXPORTED__,
-    HAPLOID_UMD_EXPORT_RESOLVER_VERSION,
+    __HAPLOID_GLOBAL_EXPORT_RESOLVER__,
+    __HAPLOID_GLOBAL_MAP_GLOBAL_EXPORTED__,
+    HAPLOID_GLOBAL_EXPORT_RESOLVER_VERSION,
 } from './constant';
 
 import { noteGlobalProps, getGlobalProp } from './utils/global-prop';
@@ -11,35 +11,35 @@ import { ensureGlobalMap } from './utils/ensureGlobalMap';
 import { Debugger } from './utils/Debugger';
 
 /**
- * Resolve the exported object from a UMD-formatted JS resource.
+ * Resolve the exported object from a global-formatted JS resource.
  */
-class UmdExportResolver extends Debugger {
-    static #instance: UmdExportResolver;
+class GlobalExportResolver extends Debugger {
+    static #instance: GlobalExportResolver;
 
-    readonly #exportedMap = ensureGlobalMap<string, keyof Window>(__HAPLOID_GLOBAL_MAP_UMD_EXPORTED__);
+    readonly #exportedMap = ensureGlobalMap<string, keyof Window>(__HAPLOID_GLOBAL_MAP_GLOBAL_EXPORTED__);
 
     private constructor() {
         super();
         /* istanbul ignore if: difficult to enter */
-        if (UmdExportResolver.#instance) {
-            throw Error('UmdExportResolver cannot be created more than once.');
+        if (GlobalExportResolver.#instance) {
+            throw Error('GlobalExportResolver cannot be created more than once.');
         }
     }
 
     protected get debugName(): string {
-        return 'umd-export-resolver';
+        return 'global-export-resolver';
     }
 
     public get version(): number {
-        return HAPLOID_UMD_EXPORT_RESOLVER_VERSION;
+        return HAPLOID_GLOBAL_EXPORT_RESOLVER_VERSION;
     }
 
-    public static getInstance(): UmdExportResolver {
-        if (!UmdExportResolver.#instance) {
-            UmdExportResolver.#instance = new UmdExportResolver();
+    public static getInstance(): GlobalExportResolver {
+        if (!GlobalExportResolver.#instance) {
+            GlobalExportResolver.#instance = new GlobalExportResolver();
         }
 
-        return UmdExportResolver.#instance;
+        return GlobalExportResolver.#instance;
     }
 
     public resolve(evalScript: () => unknown, src: string, global: Window = window): keyof Window | undefined {
@@ -103,16 +103,16 @@ class UmdExportResolver extends Debugger {
     }
 
     public get [Symbol.toStringTag](): string {
-        return 'UmdExportResolver';
+        return 'GlobalExportResolver';
     }
 }
 
-export type { UmdExportResolver };
+export type { GlobalExportResolver };
 
-export const getUniversalUmdExportResolver = createUniversalFactory<UmdExportResolver>(
-    __HAPLOID_UMD_EXPORT_RESOLVER__,
-    () => UmdExportResolver.getInstance(),
-    HAPLOID_UMD_EXPORT_RESOLVER_VERSION,
+export const getUniversalGlobalExportResolver = createUniversalFactory<GlobalExportResolver>(
+    __HAPLOID_GLOBAL_EXPORT_RESOLVER__,
+    () => GlobalExportResolver.getInstance(),
+    HAPLOID_GLOBAL_EXPORT_RESOLVER_VERSION,
     // Conflict is better than throwing error.
     true
 );
