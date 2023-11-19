@@ -12,7 +12,7 @@ describe.only('preload', () => {
         const app = container.registerApp({
             name: 'bar',
             entry: `//localhost:10810/Container/preload-true.js?content=${encodeURIComponent(
-                `window[Math.random()] = {mount(){}, unmount(){}}`
+                `module.exports = {mount(){}, unmount(){}}`
             )}`,
             preloadDelay: 500,
         });
@@ -36,7 +36,7 @@ describe.only('preload', () => {
         const app = container.registerApp({
             name: 'bar',
             entry: `//localhost:10810/Container/preload-false.js?content=${encodeURIComponent(
-                `window[Math.random()] = {mount(){}, unmount(){}}`
+                `module.exports = {mount(){}, unmount(){}}`
             )}`,
             preloadDelay: 500,
         });
@@ -60,7 +60,7 @@ describe.only('preload', () => {
         container.registerApp({
             name: 'bar',
             entry: `//localhost:10810/Container/preload-auto.js?content=${encodeURIComponent(
-                `window[Math.random()] = {mount(){}, unmount(){}}`
+                `module.exports = {mount(){}, unmount(){}}`
             )}`,
         });
 
@@ -76,7 +76,7 @@ describe.only('preload', () => {
         const app = container.registerApp({
             name: 'bar',
             entry: `//localhost:10810/Container/preload-auto.js?content=${encodeURIComponent(
-                `window[Math.random()] = {mount(){}, unmount(){}}`
+                `module.exports = {mount(){}, unmount(){}}`
             )}`,
             preloadDelay: 500,
         });

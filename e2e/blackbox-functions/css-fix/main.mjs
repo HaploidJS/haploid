@@ -10,12 +10,14 @@ container.registerApps([
         name: 'fix-url',
         activeWhen: '#/fix-url',
         entry: './apps/fix-url.html',
+        jsExportType: 'global',
     },
     {
         name: 'force-regexp',
         activeWhen: '#/force-regexp',
         entry: './apps/force-regexp.html',
         dropURLFixInCSSByStyleSheet: true,
+        jsExportType: 'global',
     },
 ]);
 

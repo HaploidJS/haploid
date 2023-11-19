@@ -484,7 +484,7 @@ describe.only('Chrome', () => {
             await chrome.open({
                 scripts: [
                     new ScriptNode({
-                        src: `a.js?content=${encodeURIComponent(`window[Date.now()]={mount(){},unmount(){}}`)}`,
+                        src: `a.js?content=${encodeURIComponent(`module.exports={mount(){},unmount(){}}`)}`,
                     }),
                 ],
                 styles: [],
@@ -534,7 +534,7 @@ describe.only('Chrome', () => {
                 ],
                 scripts: [
                     new ScriptNode({
-                        content: 'window[Date.now()]={mount(){},unmount(){}}',
+                        content: 'module.exports={mount(){},unmount(){}}',
                     }),
                 ],
             });
@@ -562,7 +562,7 @@ describe.only('Chrome', () => {
                 ],
                 scripts: [
                     new ScriptNode({
-                        content: 'window[Date.now()]={mount(){},unmount(){}}',
+                        content: 'module.exports={mount(){},unmount(){}}',
                     }),
                 ],
             });
@@ -593,7 +593,7 @@ describe.only('Chrome', () => {
                         )}&delay=600`,
                     }),
                     new ScriptNode({
-                        content: 'window[Date.now()]={mount(){return records},unmount(){}}',
+                        content: 'module.exports={mount(){return records},unmount(){}}',
                     }),
                 ],
             });
@@ -631,7 +631,7 @@ describe.only('Chrome', () => {
                 scripts: [
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/timeout.js?delay=300&content=${encodeURIComponent(
-                            `window[Math.random()]={mount(){},unmount(){}}`
+                            `module.exports={mount(){},unmount(){}}`
                         )}`,
                     }),
                 ],
@@ -652,7 +652,7 @@ describe.only('Chrome', () => {
                 scripts: [
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/timeout-default.js?delay=6000&content=${encodeURIComponent(
-                            `window[Math.random()]={mount(){},unmount(){}}`
+                            `module.exports={mount(){},unmount(){}}`
                         )}`,
                     }),
                 ],
@@ -682,7 +682,7 @@ describe.only('Chrome', () => {
                         )}`,
                     }),
                     new ScriptNode({
-                        content: `const cs = document.currentScript;window[Date.now()]={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
+                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
                     }),
                 ],
             });
@@ -722,7 +722,7 @@ describe.only('Chrome', () => {
                         )}`,
                     }),
                     new ScriptNode({
-                        content: `const cs = document.currentScript;window[Date.now()]={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
+                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
                     }),
                 ],
             });
@@ -811,7 +811,7 @@ describe.only('Chrome', () => {
                     return Promise.resolve(p).then(() => p2);
                 }
 
-                window[Date.now()] = {
+                module.exports = {
                     bootstrap,
                     mount() {
                         return [dynamicScriptResults, docCurrentScriptCorrect];
@@ -880,7 +880,7 @@ describe.only('Chrome', () => {
                     return Promise.resolve(p);
                 }
 
-                window[Date.now()] = {
+                module.exports = {
                     bootstrap,
                     mount() {
                         return dynamicScriptResults;
@@ -963,7 +963,7 @@ describe.only('Chrome', () => {
                     return Promise.resolve(p).then(() => p2);
                 }
 
-                window[Date.now()] = {
+                module.exports = {
                     bootstrap,
                     mount() {
                         return [dynamicLinkResults];

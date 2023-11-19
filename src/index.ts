@@ -27,6 +27,7 @@ export type {
     KeepAlive,
     Sandbox,
     ResourceFetchingOptions,
+    JSExportType,
 } from './Def';
 export * from './Container';
 export { ManualContainer } from './ManualContainer';

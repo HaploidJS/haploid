@@ -29,4 +29,4 @@ function unmount({ domElement }) {
     domElement.innerHTML = '';
 }
 
-window[Date.now()] = { bootstrap, mount, unmount };
+module.exports = { bootstrap, mount, unmount };

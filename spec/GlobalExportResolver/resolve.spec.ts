@@ -12,10 +12,12 @@ describe.only('resolve', () => {
         expect(resolvedKey).toEqual(key);
     });
 
-    it('return undefined if resolved failed', async () => {
+    it('resolved failed', async () => {
         const key = uuid();
 
-        expect(getUniversalGlobalExportResolver().resolve(() => {}, `${key}.js`)).toBe(undefined);
+        expect(() => getUniversalGlobalExportResolver().resolve(() => {}, `${key}.js`)).toThrow(
+            /Cannot find global exported object in/
+        );
     });
 
     it('resolved repeatly if src equals', async () => {
@@ -40,10 +42,10 @@ describe.only('resolve', () => {
             Reflect.set(window, key, 1);
         }, `${key}.js`);
 
-        expect(
+        expect(() =>
             getUniversalGlobalExportResolver().resolve(() => {
                 Reflect.set(window, key, 1);
             }, `${key}-2.js`)
-        ).toBe(undefined);
+        ).toThrow(/Cannot find global exported object in/);
     });
 });

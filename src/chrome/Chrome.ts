@@ -1,7 +1,7 @@
 import { getUniversalGlobalExportResolver } from '../GlobalExportResolver';
 import { WindowNode, RawWindowNode, WindowShadow } from './BOM/';
 import { ElementNode, ScriptNode, StyleNode } from '../node/';
-import type { ChromeOptions, LifecycleFns, ResourceFetchingOptions } from '../Def';
+import { ChromeOptions, LifecycleFns, ResourceFetchingOptions } from '../Def';
 import { createESEngine, ESEngine } from './ESEngine';
 
 import { PresetDOMParser } from '../utils/PresetDOMParser';
@@ -242,34 +242,58 @@ export class Chrome extends Debugger {
             nonDepScripts.forEach(s => this.#execScriptNode(s));
         });
 
-        this.debug('Evaluate entry script: %s.', entry);
+        const jsType = this.#options.jsExportType;
 
-        if (entry.isESM) {
-            const exported = await this.#execScriptNode<
-                LifecycleFns<CustomProps> | { __HAPLOID_LIFECYCLE_EXPORT__: Promise<LifecycleFns<CustomProps>> }
-            >(entry);
+        this.debug('Evaluate entry script %s by type %s.', entry, jsType);
 
-            if ('__HAPLOID_LIFECYCLE_EXPORT__' in exported) {
-                return Promise.resolve(exported.__HAPLOID_LIFECYCLE_EXPORT__);
-            }
-
-            return exported;
+        switch (jsType) {
+            case undefined:
+                return entry.isESM
+                    ? this.#executeEntryAndGetLifecycleByESM(entry)
+                    : this.#executeEntryAndGetLifecycleByUMD(entry);
+            case 'esm':
+            case 'module':
+                return this.#executeEntryAndGetLifecycleByESM(entry);
+            case 'umd':
+                return this.#executeEntryAndGetLifecycleByUMD(entry);
+            case 'global':
+                return this.#executeEntryAndGetLifecycleByGlobal(entry);
+            default:
+                throw Error(`Unsupported jsEntryType ${jsType}.`);
         }
+    }
 
+    #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
         const entryKey = getUniversalGlobalExportResolver().resolve(
             () => this.#execScriptNode(entry),
             entry.src || entry.content,
             this.window
         );
 
+        return this.window[entryKey];
+    }
+
+    #executeEntryAndGetLifecycleByUMD<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+        this.#execScriptNode(entry);
+        // TODO check retry
         if (this.#evalEnv.module.exports !== this.#originalExports) {
             // exports has been set!
-            return this.#evalEnv.module.exports as LifecycleFns<CustomProps>;
+            return Promise.resolve(this.#evalEnv.module.exports as LifecycleFns<T>);
         }
 
-        if (!entryKey) throw Error(`Cannot find UMD exported object in ${entry.src || entry.content}.`);
+        throw Error(`Cannot find UMD exports from ${entry.src}.`);
+    }
 
-        return this.window[entryKey];
+    async #executeEntryAndGetLifecycleByESM<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+        const exported = await this.#execScriptNode<
+            LifecycleFns<T> | { __HAPLOID_LIFECYCLE_EXPORT__: Promise<LifecycleFns<T>> }
+        >(entry);
+
+        if ('__HAPLOID_LIFECYCLE_EXPORT__' in exported) {
+            return Promise.resolve(exported.__HAPLOID_LIFECYCLE_EXPORT__);
+        }
+
+        return exported;
     }
 
     #createInlineStyle(style: StyleNode): HTMLStyleElement {

@@ -17,6 +17,7 @@ describe.only('LoadFromEntryPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             entry: entryUrl,
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({
@@ -42,6 +43,7 @@ describe.only('LoadFromEntryPlugin', () => {
             entry: {
                 url: entryUrl,
             },
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({
@@ -65,6 +67,7 @@ describe.only('LoadFromEntryPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             entry: Promise.resolve(entryUrl),
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({
@@ -88,6 +91,7 @@ describe.only('LoadFromEntryPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             entry: async (): Promise<string> => entryUrl,
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({
@@ -122,6 +126,7 @@ describe.only('LoadFromEntryPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             entry: entryUrl,
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({
@@ -174,6 +179,7 @@ describe.only('LoadFromEntryPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             entry: entryUrl,
+            jsExportType: 'global',
             ignoreAsset: (src: string): boolean => /404/.test(src),
         });
 
@@ -204,7 +210,7 @@ describe.only('LoadFromEntryPlugin', () => {
                         <div id="root"></div>
                         <base/>
                         <title></title>
-                        <script entry>window[Date.now()] = {mount(){},unmount(){}}</script>
+                        <script entry>globalThis[Date.now()] = {mount(){},unmount(){}}</script>
                         TEXT
                     </body>
                 </html>
@@ -213,6 +219,7 @@ describe.only('LoadFromEntryPlugin', () => {
         let app = new App<unknown, unknown>({
             name: 'foo',
             entry: entryUrl,
+            jsExportType: 'global',
             // default true in HTML
             // preserveHTML: true,
         });
@@ -238,6 +245,7 @@ describe.only('LoadFromEntryPlugin', () => {
             name: 'foo',
             entry: entryUrl,
             preserveHTML: false,
+            jsExportType: 'global',
         });
 
         createLoadFromEntryPlugin()({

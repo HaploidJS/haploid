@@ -14,7 +14,7 @@ describe.only(`happy-load`, () => {
             fn('resolveAssets');
             return {
                 styles: [],
-                scripts: [new ScriptNode({ content: `globalThis[Date.now()]={mount(){return 365;},unmount(){}}` })],
+                scripts: [new ScriptNode({ content: `module.exports={mount(){return 365;},unmount(){}}` })],
             };
         });
 
