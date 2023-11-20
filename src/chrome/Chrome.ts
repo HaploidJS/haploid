@@ -151,7 +151,7 @@ export class Chrome extends Debugger {
      * @param content
      * @returns
      */
-    public open<CustomProps>(content: ChromeContent): Promise<LifecycleFns<CustomProps>> {
+    public boot<CustomProps>(content: ChromeContent): Promise<LifecycleFns<CustomProps>> {
         this.debug('Call open(%O).', content);
         if (this.#isClosed) {
             return Promise.reject(Error('This chrome has been closed.'));
@@ -242,6 +242,10 @@ export class Chrome extends Debugger {
             nonDepScripts.forEach(s => this.#execScriptNode(s));
         });
 
+        return this.executeEntryAndGetLifecycle<CustomProps>(entry);
+    }
+
+    public executeEntryAndGetLifecycle<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
         const jsType = this.#options.jsExportType;
 
         this.debug('Evaluate entry script %s by type %s.', entry, jsType);
@@ -289,7 +293,7 @@ export class Chrome extends Debugger {
             LifecycleFns<T> | { __HAPLOID_LIFECYCLE_EXPORT__: Promise<LifecycleFns<T>> }
         >(entry);
 
-        if ('__HAPLOID_LIFECYCLE_EXPORT__' in exported) {
+        if (exported && '__HAPLOID_LIFECYCLE_EXPORT__' in exported) {
             return Promise.resolve(exported.__HAPLOID_LIFECYCLE_EXPORT__);
         }
 

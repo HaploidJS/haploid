@@ -481,7 +481,7 @@ describe.only('Chrome', () => {
                 urlRewrite,
             });
 
-            await chrome.open({
+            await chrome.boot({
                 scripts: [
                     new ScriptNode({
                         src: `a.js?content=${encodeURIComponent(`module.exports={mount(){},unmount(){}}`)}`,
@@ -494,7 +494,7 @@ describe.only('Chrome', () => {
         });
     });
 
-    describe('open', () => {
+    describe('boot', () => {
         let chrome: Chrome;
 
         beforeEach(() => {
@@ -512,7 +512,7 @@ describe.only('Chrome', () => {
             chrome.close();
 
             await expect(
-                chrome.open({
+                chrome.boot({
                     styles: [],
                     scripts: [
                         new ScriptNode({
@@ -524,7 +524,7 @@ describe.only('Chrome', () => {
         });
 
         it('throws later if closed', async () => {
-            const openPromise = chrome.open({
+            const openPromise = chrome.boot({
                 styles: [
                     new StyleNode({
                         href: `//localhost:10810/chrome/Chrome/style.css?content=${encodeURIComponent(
@@ -547,7 +547,7 @@ describe.only('Chrome', () => {
         });
 
         it('<style> elements are injected in order in "head"', async () => {
-            await chrome.open({
+            await chrome.boot({
                 styles: [
                     new StyleNode({
                         href: `//localhost:10810/chrome/Chrome/style.css?content=${encodeURIComponent(
@@ -574,7 +574,7 @@ describe.only('Chrome', () => {
         });
 
         it('dependencies scripts are evaluated in order', async () => {
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -601,16 +601,54 @@ describe.only('Chrome', () => {
             const mounts = toArray(lf.mount);
             expect(mounts[0]({ name: 'foo' })).toEqual([1, 2]);
         });
+    });
+
+    describe('executeEntryAndGetLifecycle', () => {
+        it('resolve global exports', async () => {
+            const chrome = new Chrome({
+                name: 'foo',
+                sandbox: true,
+                jsExportType: 'global',
+            });
+            const lf = await chrome.executeEntryAndGetLifecycle(
+                new ScriptNode({
+                    content: `globalThis[Math.random()] = {mount(){return 789},unmount(){}}`,
+                })
+            );
+            const mounts = toArray(lf.mount);
+            expect(mounts[0]({ name: 'foo' })).toEqual(789);
+        });
+
+        // Cannot test ESM
+        it.skip('resolve ESM exports', async () => {
+            const chrome = new Chrome({
+                name: 'foo',
+                sandbox: true,
+                jsExportType: 'esm',
+            });
+
+            const lf = await chrome.executeEntryAndGetLifecycle(
+                new ScriptNode({
+                    content: `export function mount(){return 789}; export function unmount(){}};`,
+                    type: 'module',
+                })
+            );
+
+            const mounts = toArray(lf.mount);
+            expect(mounts[0]({ name: 'foo' })).toEqual(789);
+        });
 
         it('resolve UMD exports', async () => {
-            const lf = await chrome.open({
-                styles: [],
-                scripts: [
-                    new ScriptNode({
-                        content: `if(typeof exports === 'object' && typeof module === 'object')module.exports = {mount(){return 789},unmount(){}}`,
-                    }),
-                ],
+            const chrome = new Chrome({
+                name: 'foo',
+                sandbox: true,
+                jsExportType: 'umd',
             });
+            const lf = await chrome.executeEntryAndGetLifecycle(
+                new ScriptNode({
+                    content: `if(typeof exports === 'object' && typeof module === 'object')module.exports = {mount(){return 789},unmount(){}}`,
+                })
+            );
 
             const mounts = toArray(lf.mount);
             expect(mounts[0]({ name: 'foo' })).toEqual(789);
@@ -626,7 +664,7 @@ describe.only('Chrome', () => {
                 },
             });
 
-            const open = chrome.open({
+            const open = chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -647,7 +685,7 @@ describe.only('Chrome', () => {
                 name: 'bar',
             });
 
-            const open = chrome.open({
+            const open = chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -673,7 +711,7 @@ describe.only('Chrome', () => {
                 sandbox: true,
             });
 
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -713,7 +751,7 @@ describe.only('Chrome', () => {
                 sandbox: false,
             });
 
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -821,7 +859,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -890,7 +928,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -973,7 +1011,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.open({
+            const lf = await chrome.boot({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -1023,7 +1061,7 @@ describe.only('Chrome', () => {
             loadTime = Date.now();
         });
 
-        await chrome.open({ scripts: [], styles: [] }).catch(() => {});
+        await chrome.boot({ scripts: [], styles: [] }).catch(() => {});
 
         const timeArray = [
             readystatechangeInteractiveTime,
