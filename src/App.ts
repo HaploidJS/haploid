@@ -423,7 +423,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
                 });
 
                 if (assets) {
-                    lifecycle = await chrome.open<CustomProps>(assets);
+                    lifecycle = await chrome.boot<CustomProps>(assets);
                 } else if (this.options.lifecycle) {
                     lifecycle = await normalizeTransformable(this.options.lifecycle);
                 } else {
