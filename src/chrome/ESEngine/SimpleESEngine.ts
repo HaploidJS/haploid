@@ -1,6 +1,6 @@
 import { BaseESEngine } from './BaseESEngine';
+import type { ScriptNode } from '../../node/';
 import { hasOwn } from '../../utils/hasOwn';
-import { summary } from '../utils';
 
 export class SimpleESEngine extends BaseESEngine {
     protected get debugName(): string {
@@ -8,9 +8,11 @@ export class SimpleESEngine extends BaseESEngine {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public execScript<T = any>(code: string, src?: string): T {
-        this.debug('execScript(%s, %s).', summary(code), src);
-        code = this.fixSourceURL(code, src);
+    protected override onExecScript<T = any>(script: ScriptNode): Promise<T> | T {
+        const { src, content } = script;
+        this.debug('onExecScript(%o).', script);
+
+        const code = this.fixSourceURL(content, src);
 
         const envVariables = this.windowShadow.shadow;
         const keys = Object.getOwnPropertyNames(envVariables);

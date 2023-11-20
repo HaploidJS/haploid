@@ -171,7 +171,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
 
     #apiInstance: AppAPI<AdditionalOptions, CustomProps> | null = null;
 
-    #chrome: Chrome | null = null;
+    #chrome: Chrome<CustomProps> | null = null;
 
     readonly #atomic = new Atomic();
 
@@ -390,7 +390,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
             await promiseIgnoreCatch(this.hooks.beforeload.promise());
 
             try {
-                let lifecycle: LifecycleFns<CustomProps>;
+                let lifecycle: LifecycleFns<CustomProps> | undefined = undefined;
                 const assets = await this.hooks.resolveAssets.promise();
                 const envVariables = await this.hooks.resolveEnvVariables.promise({});
 
@@ -415,7 +415,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
                     },
                 };
 
-                const chrome = new Chrome(chromeOptions);
+                const chrome = new Chrome<CustomProps>(chromeOptions);
 
                 // update domElement to app hooks
                 this.#lifecycle.updateFixedProps({
@@ -423,12 +423,15 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
                 });
 
                 if (assets) {
-                    lifecycle = await chrome.boot<CustomProps>(assets);
+                    await chrome.launch(assets);
+                    lifecycle = chrome.lifecycleFns;
                 } else if (this.options.lifecycle) {
                     lifecycle = await normalizeTransformable(this.options.lifecycle);
                 } else {
                     throw Error('No lifecycle fns loaded.');
                 }
+
+                if (!lifecycle) throw Error(`Failed to resolve lifecycles.`);
 
                 this.#lifecycle.setFns(lifecycle);
 

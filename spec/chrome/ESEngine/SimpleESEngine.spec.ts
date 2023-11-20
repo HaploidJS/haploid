@@ -1,14 +1,17 @@
 import { createESEngine } from '@/chrome/ESEngine/';
 import { RawWindowNode } from '@/chrome/BOM/';
+import { ScriptNode } from '@/node/';
 
 describe.only('SimpleESEngine', () => {
     it('inject variables', async () => {
         const engine = createESEngine(false, new RawWindowNode({ __DEV__: true }));
 
         expect(
-            engine.execScript(`
-        __DEV__
-        `)
+            engine.execScript(
+                new ScriptNode({
+                    content: `__DEV__`,
+                })
+            )
         ).toBe(true);
 
         // do not leak
@@ -25,9 +28,11 @@ describe.only('SimpleESEngine', () => {
         const engine = createESEngine(false, new RawWindowNode({ __DEV__: true }));
 
         expect(
-            engine.execScript(`
-        __DEV__
-        `)
+            engine.execScript(
+                new ScriptNode({
+                    content: `__DEV__`,
+                })
+            )
         ).toBe(true);
 
         // recovered
@@ -44,9 +49,11 @@ describe.only('SimpleESEngine', () => {
         const engine = createESEngine(false, new RawWindowNode({ __DEV__: true }));
 
         expect(
-            engine.execScript(`
-        __DEV__
-        `)
+            engine.execScript(
+                new ScriptNode({
+                    content: `__DEV__`,
+                })
+            )
         ).toBe(6);
     });
 });

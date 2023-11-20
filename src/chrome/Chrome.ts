@@ -1,7 +1,8 @@
 import { getUniversalGlobalExportResolver } from '../GlobalExportResolver';
+import { analyse, urlRewrite, createFetchResourceOptions } from './utils';
 import { WindowNode, RawWindowNode, WindowShadow } from './BOM/';
-import { ElementNode, ScriptNode, StyleNode } from '../node/';
-import { ChromeOptions, LifecycleFns, ResourceFetchingOptions } from '../Def';
+import { ScriptNode, StyleNode } from '../node/';
+import { ChromeOptions, LifecycleFns } from '../Def';
 import { createESEngine, ESEngine } from './ESEngine';
 
 import { PresetDOMParser } from '../utils/PresetDOMParser';
@@ -15,7 +16,7 @@ interface ChromeContent {
     styles: StyleNode[];
 }
 
-export class Chrome extends Debugger {
+export class Chrome<T = unknown> extends Debugger {
     readonly #options: ChromeOptions;
 
     readonly #windowShadow: WindowShadow;
@@ -23,6 +24,8 @@ export class Chrome extends Debugger {
     readonly #evalEnv: Record<PropertyKey, unknown> & { module: { exports: unknown } };
 
     readonly #originalExports = {};
+
+    #lifecycleFns: LifecycleFns<T> | undefined = undefined;
 
     #isClosed = false;
 
@@ -77,39 +80,46 @@ export class Chrome extends Debugger {
             /* esEngineOptions */ options
         );
 
-        this.#windowShadow.documentShadow.hooks.scriptappended.tapPromise('Chrome', script => {
-            const node = ScriptNode.fromElement(script, script.baseURI);
+        this.#windowShadow.documentShadow.hooks.scriptappended.tapPromise('Chrome', script =>
+            this.onNewScriptElementCreated(script)
+        );
 
-            return node.downloadContent(this.#createFetchResourceOptions(node.src)).then(
-                () =>
-                    promiseIgnoreCatch(Promise.resolve().then(() => this.#execScriptNode(node, script))).then(() => {}),
-                error => Promise.reject(error)
-            );
-        });
-
-        this.#windowShadow.documentShadow.hooks.linkappended.tapPromise('Chrome', link => {
-            const node = StyleNode.fromLinkElement(link, link.baseURI);
-
-            // Only care valid ones.
-            if (!node.isValid) return Promise.resolve();
-            // TODO support preload etc.
-
-            return node.downloadContent(this.#createFetchResourceOptions(node.href)).then(
-                () =>
-                    promiseIgnoreCatch(
-                        Promise.resolve().then(() => {
-                            const styleElement = this.#createInlineStyle(node);
-                            // Put the inline <style> after <haploid-link>
-                            link.insertAdjacentElement('afterend', styleElement);
-                        })
-                    ).then(() => {}),
-                error => Promise.reject(error)
-            );
-        });
+        this.#windowShadow.documentShadow.hooks.linkappended.tapPromise('Chrome', link =>
+            this.onNewLinkElementCreated(link)
+        );
 
         this.htmlElement.setAttribute(
             'data-haploid-app',
             'undefined' === typeof CSS ? options.name : CSS.escape(options.name)
+        );
+    }
+
+    public onNewLinkElementCreated(link: HTMLLinkElement): Promise<void> {
+        const node = StyleNode.fromLinkElement(link, link.baseURI);
+
+        // Only care valid ones.
+        if (!node.isValid) return Promise.resolve();
+        // TODO support preload etc.
+
+        return node.downloadContent(createFetchResourceOptions(node.href, this.#options.fetchResourceOptions)).then(
+            () =>
+                promiseIgnoreCatch(
+                    Promise.resolve().then(() => {
+                        const styleElement = this.#createInlineStyle(node);
+                        // Put the inline <style> after <haploid-link>
+                        link.insertAdjacentElement('afterend', styleElement);
+                    })
+                ).then(() => {}),
+            error => Promise.reject(error)
+        );
+    }
+
+    public onNewScriptElementCreated(script: HTMLScriptElement): Promise<void> {
+        const node = ScriptNode.fromElement(script, script.baseURI);
+
+        return node.downloadContent(createFetchResourceOptions(node.src, this.#options.fetchResourceOptions)).then(
+            () => promiseIgnoreCatch(Promise.resolve().then(() => this.#execScriptNode(node, script))).then(() => {}),
+            error => Promise.reject(error)
         );
     }
 
@@ -145,77 +155,91 @@ export class Chrome extends Debugger {
         return this.#windowShadow.node;
     }
 
+    public get lifecycleFns(): LifecycleFns<T> | undefined {
+        return this.#lifecycleFns;
+    }
+
+    #entry: ScriptNode | null = null;
+    #styles: StyleNode[] = [];
+    #depScripts: ScriptNode[] = [];
+    #nonDepScripts: ScriptNode[] = [];
+
+    public get entry(): ScriptNode | null {
+        return this.#entry;
+    }
+
+    public get styles(): StyleNode[] {
+        return this.#styles;
+    }
+
+    public get depScripts(): ScriptNode[] {
+        return this.#depScripts;
+    }
+
+    public get nonDepScripts(): ScriptNode[] {
+        return this.#nonDepScripts;
+    }
+
     /**
      * This function is not concurrency-safe.
      *
      * @param content
      * @returns
      */
-    public boot<CustomProps>(content: ChromeContent): Promise<LifecycleFns<CustomProps>> {
+    public async launch(content: ChromeContent): Promise<void> {
         this.debug('Call open(%O).', content);
+
         if (this.#isClosed) {
             return Promise.reject(Error('This chrome has been closed.'));
         }
 
         this.#windowShadow.onLoading();
 
-        return this.#loadWith(content).finally(() => {
+        try {
+            const { styles, depScripts, nonDepScripts, entry } = analyse(urlRewrite(content, this.#options.urlRewrite));
+
+            this.#styles = styles;
+            this.#depScripts = depScripts;
+            this.#nonDepScripts = nonDepScripts;
+            this.#entry = entry;
+
+            await this.load();
+        } finally {
             this.#windowShadow.onLoad();
-        });
+        }
     }
 
-    #createFetchResourceOptions(src?: string): ResourceFetchingOptions {
-        const fetchResourceOptions = this.#options.fetchResourceOptions;
-        let rfo: ResourceFetchingOptions;
-
-        if ('function' === typeof fetchResourceOptions) {
-            rfo = src ? fetchResourceOptions.call(null, src) : {};
-        } else {
-            rfo = fetchResourceOptions ?? {};
-        }
-
-        if (!('timeout' in rfo)) {
-            rfo.timeout = 5000;
-        } else if ('number' !== typeof rfo.timeout || rfo.timeout < 0) {
-            rfo.timeout = 5000;
-        }
-
-        if (!('retries' in rfo)) {
-            rfo.retries = 0;
-        } else if ('number' !== typeof rfo.retries || rfo.retries < 0) {
-            rfo.retries = 0;
-        }
-
-        return rfo;
-    }
-
-    async #loadWith<CustomProps>(content: ChromeContent): Promise<LifecycleFns<CustomProps>> {
-        const { styles, depScripts, nonDepScripts, entry } = this.analyse(this.urlRewrite(content));
-
+    public async load(): Promise<void> {
         // ⬇️ Downloading styles should block process.
-        await Promise.all(styles.map(s => s.downloadContent(this.#createFetchResourceOptions(s.href))));
+        await Promise.all(
+            this.#styles.map(s =>
+                s.downloadContent(createFetchResourceOptions(s.href, this.#options.fetchResourceOptions))
+            )
+        );
         // Downloading contents costs so much time, we have to check if this chrome has already exited.
         if (this.#isClosed) throw Error(`${this} has been closed.`);
 
-        this.#createStyleElements(styles);
+        this.#createStyleElements(this.#styles);
 
-        this.debug('Download and evaluate dependency scripts: %O.', depScripts.join('\n'));
+        this.debug('Download and evaluate dependency scripts: %O.', this.#depScripts.join('\n'));
 
         let indexWaitToExecute = 0;
 
-        const downloadedRecord = new Array<boolean>(depScripts.length).fill(false);
+        const downloadedRecord = new Array<boolean>(this.#depScripts.length).fill(false);
 
         await Promise.all([
-            entry.downloadContent(this.#createFetchResourceOptions(entry.src)),
-            ...depScripts.map((s, i) =>
+            this.#entry?.downloadContent(
+                createFetchResourceOptions(this.#entry.src, this.#options.fetchResourceOptions)
+            ),
+            ...this.#depScripts.map((s, i) =>
                 s
-                    .downloadContent(this.#createFetchResourceOptions(s.src))
+                    .downloadContent(createFetchResourceOptions(s.src, this.#options.fetchResourceOptions))
                     .then(() => {
                         downloadedRecord[i] = true;
                         if (i === indexWaitToExecute) {
                             let j = i;
                             while (j < downloadedRecord.length && downloadedRecord[j]) {
-                                this.#execScriptNode(depScripts[j]);
+                                this.#execScriptNode(this.#depScripts[j]);
                                 j += 1;
                             }
                             indexWaitToExecute = j;
@@ -229,23 +253,27 @@ export class Chrome extends Debugger {
 
         // Evaluate non-dependency scripts, don't block process.
         setTimeout(async () => {
-            if (!nonDepScripts.length) {
+            if (!this.#nonDepScripts.length) {
                 return;
             }
 
-            this.debug('Evaluate non-dependency scripts:\n%s.', nonDepScripts.join('\n'));
+            this.debug('Evaluate non-dependency scripts:\n%s.', this.#nonDepScripts.join('\n'));
 
             // ⬇️ Download non-dependency scripts.
-            await Promise.all(nonDepScripts.map(s => s.downloadContent(this.#createFetchResourceOptions(s.src))));
+            await Promise.all(
+                this.#nonDepScripts.map(s =>
+                    s.downloadContent(createFetchResourceOptions(s.src, this.#options.fetchResourceOptions))
+                )
+            );
 
             if (this.#isClosed) return;
-            nonDepScripts.forEach(s => this.#execScriptNode(s));
+            this.#nonDepScripts.forEach(s => this.#execScriptNode(s));
         });
 
-        return this.executeEntryAndGetLifecycle<CustomProps>(entry);
+        if (this.#entry) this.#lifecycleFns = await this.executeEntryAndGetLifecycle(this.#entry);
     }
 
-    public executeEntryAndGetLifecycle<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+    public executeEntryAndGetLifecycle<T>(entry: ScriptNode): Promise<LifecycleFns<T> | undefined> {
         const jsType = this.#options.jsExportType;
 
         this.debug('Evaluate entry script %s by type %s.', entry, jsType);
@@ -257,14 +285,18 @@ export class Chrome extends Debugger {
                     : this.#executeEntryAndGetLifecycleByUMD(entry);
             case 'esm':
             case 'module':
+                entry.isESM = true;
                 return this.#executeEntryAndGetLifecycleByESM(entry);
             case 'umd':
+                entry.isESM = false;
                 return this.#executeEntryAndGetLifecycleByUMD(entry);
             case 'global':
+                entry.isESM = false;
                 return this.#executeEntryAndGetLifecycleByGlobal(entry);
             default:
-                throw Error(`Unsupported jsEntryType ${jsType}.`);
         }
+
+        return Promise.resolve(undefined);
     }
 
     #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
@@ -325,194 +357,35 @@ export class Chrome extends Debugger {
         return styleElement;
     }
 
-    async #createStyleElements(styles: StyleNode[]): Promise<void> {
-        this.debug('Call #createStyleElements(%O).', styles);
-
-        for (const style of styles) {
-            const styleElement = this.#createInlineStyle(style);
-
-            this.#windowShadow.documentShadow.headElement.appendChild(styleElement);
-        }
-    }
-
-    public analyse(content: { scripts: ScriptNode[]; styles: StyleNode[] }): {
-        styles: StyleNode[];
-        depScripts: ScriptNode[];
-        nonDepScripts: ScriptNode[];
-        entry: ScriptNode;
-    } {
-        const invalid: ElementNode[] = [];
-        const scripts: ScriptNode[] = [];
-        const styles: StyleNode[] = [];
-        const entries: ScriptNode[] = [];
-
-        content.scripts.forEach(node => {
-            (node.isValid ? scripts : invalid).push(node);
-            if (node.isValid && node.isEntry) entries.push(node);
-        });
-
-        if (entries.length > 1) {
-            this.debug('Unexpected redundant entries:\n%s.', entries.join('\n'));
-            throw Error(`${this} has unexpected redundant entries.`);
-        }
-
-        let entry = entries[0];
-
-        if (!entry) {
-            for (let i = scripts.length - 1; i >= 0; i -= 1) {
-                if ('undefined' === typeof scripts[i].isEntry) {
-                    entry = scripts[i];
-                    break;
-                }
-            }
-        }
-
-        if (!entry) throw Error(`${this} has no js entry.`);
-
-        content.styles.forEach(node => (node.isValid ? styles : invalid).push(node));
-
-        if (this.debug.enabled && invalid.length > 0) {
-            this.debug('Invalid style or script:\n%s.', invalid.join('\n'));
-        }
-
-        let entryIndex = -1;
-        const depScripts: ScriptNode[] = [];
-        const nonDepScripts: ScriptNode[] = [];
-
-        scripts.forEach((s, index) => {
-            if (s === entry) {
-                entryIndex = index;
-                return;
-            }
-
-            let isDep = false;
-
-            if (entry.isAsync) {
-                isDep = entryIndex === -1 && !s.isAsync && !s.isDefer;
-            } else if (entry.isDefer) {
-                isDep = (entryIndex === -1 && !s.isAsync) || (entryIndex > -1 && !s.isAsync && !s.isDefer);
-            } else {
-                isDep = entryIndex === -1 && !s.isAsync && !s.isDefer;
-            }
-
-            (isDep ? depScripts : nonDepScripts).push(s);
-        });
-
-        if (this.debug.enabled) {
-            this.debug('Styles and dependency scripts:\n%s.', [...styles, ...depScripts, entry].join('\n'));
-        }
-
-        return {
-            styles,
-            depScripts,
-            nonDepScripts,
-            entry,
-        };
-    }
-
-    public urlRewrite(content: ChromeContent): ChromeContent {
-        if (!this.#options.urlRewrite) {
-            return content;
-        }
-
-        if ('function' !== typeof this.#options.urlRewrite) {
-            console.warn('Option "urlRewrite" must be a function.');
-            return content;
-        }
-
-        const rewritedScripts: ScriptNode[] = [];
-        const rewritedStyles: StyleNode[] = [];
-
-        for (const script of content.scripts) {
-            if (script.src) {
-                const newUrl = this.#options.urlRewrite.call(null, script.src);
-                if ('string' !== typeof newUrl) {
-                    console.warn(`Option urlRewrite must return a string`);
-                    rewritedScripts.push(script);
-                    continue;
-                }
-
-                this.debug('Rewrite %s to %s.', script.src, newUrl);
-
-                rewritedScripts.push(
-                    script.clone({
-                        src: newUrl,
-                    })
-                );
-            } else {
-                rewritedScripts.push(script);
-            }
-        }
-
-        for (const style of content.styles) {
-            if (style.href) {
-                const newUrl = this.#options.urlRewrite.call(null, style.href);
-                if ('string' !== typeof newUrl) {
-                    console.warn(`Option urlRewrite must return a string`);
-                    rewritedStyles.push(style);
-                    continue;
-                }
-
-                this.debug('Rewrite %s to %s.', style.href, newUrl);
-
-                rewritedStyles.push(
-                    style.clone({
-                        href: newUrl,
-                    })
-                );
-            } else {
-                rewritedStyles.push(style);
-            }
-        }
-
-        return {
-            scripts: rewritedScripts,
-            styles: rewritedStyles,
-        };
-    }
-
     #execScriptNode<T = unknown>(script: ScriptNode, scriptElement?: HTMLScriptElement): Promise<T> | T {
-        if (script.isESM) {
-            return this.#execESMWithCurrentScript(script, scriptElement);
-        } else {
-            return this.#execNonESMWithCurrentScript<T>(script, scriptElement);
-        }
-    }
+        this.debug(`Call #execScriptNode(%o).`, script);
+        return this.#esEngine.execScript(
+            script,
+            () => {
+                if (!scriptElement) scriptElement = this.#insertPseudoScript(script);
 
-    #execESMWithCurrentScript<T>(script: ScriptNode, scriptElement?: HTMLScriptElement): Promise<T> {
-        // TODO ESM should specify import.meta.url.
-        if (!scriptElement) this.#insertPseudoScript(script);
-        return this.#esEngine.execESMScript(script.content, script.src);
-    }
-
-    /**
-     * Evaluate a non-ESM script, with surrounding of corrent document.currentScript.
-     * @param script
-     * @param scriptElement The surrounding <script>, created if not provided.
-     * @returns
-     */
-    #execNonESMWithCurrentScript<T = unknown>(script: ScriptNode, scriptElement?: HTMLScriptElement): T {
-        scriptElement = scriptElement ?? this.#insertPseudoScript(script);
-
-        Reflect.defineProperty(this.window.document, 'currentScript', {
-            get() {
-                return scriptElement;
+                if (!script.isESM) {
+                    Reflect.defineProperty(this.window.document, 'currentScript', {
+                        get() {
+                            return scriptElement;
+                        },
+                        configurable: true,
+                        enumerable: true,
+                    });
+                }
             },
-            configurable: true,
-            enumerable: true,
-        });
-
-        try {
-            return this.#esEngine.execScript<T>(script.content, script.src);
-        } finally {
-            Reflect.defineProperty(this.window.document, 'currentScript', {
-                get() {
-                    return null;
-                },
-                configurable: true,
-                enumerable: true,
-            });
-        }
+            () => {
+                if (!script.isESM) {
+                    Reflect.defineProperty(this.window.document, 'currentScript', {
+                        get() {
+                            return null;
+                        },
+                        configurable: true,
+                        enumerable: true,
+                    });
+                }
+            }
+        );
     }
 
     /**
@@ -540,6 +413,16 @@ export class Chrome extends Debugger {
         this.bodyElement.appendChild(script);
 
         return script;
+    }
+
+    async #createStyleElements(styles: StyleNode[]): Promise<void> {
+        this.debug('Call #createStyleElements(%O).', styles);
+
+        for (const style of styles) {
+            const styleElement = this.#createInlineStyle(style);
+
+            this.#windowShadow.documentShadow.headElement.appendChild(styleElement);
+        }
     }
 
     public close(): void {

@@ -126,375 +126,7 @@ describe.only('Chrome', () => {
         chrome.close();
     });
 
-    describe('analyse', () => {
-        let chrome: Chrome;
-
-        beforeEach(() => {
-            chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-            });
-        });
-
-        afterEach(() => {
-            chrome?.close();
-        });
-
-        it('filter invalid script', () => {
-            const { depScripts } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        content: ';',
-                    }),
-                    new ScriptNode({
-                        content: ';',
-                    }),
-                    new ScriptNode({
-                        content: '',
-                    }),
-                ],
-                styles: [],
-            });
-
-            expect(depScripts).toHaveLength(1);
-        });
-
-        it('throws if more than entries', () => {
-            expect(() =>
-                chrome.analyse({
-                    scripts: [
-                        new ScriptNode({
-                            content: ';',
-                            entry: true,
-                        }),
-                        new ScriptNode({
-                            content: ';',
-                            entry: true,
-                        }),
-                    ],
-                    styles: [],
-                })
-            ).toThrow(/unexpected redundant entries/);
-        });
-
-        it('last script is entry by default', () => {
-            const { entry } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        content: '3;',
-                    }),
-                    new ScriptNode({
-                        content: '4;',
-                    }),
-                ],
-                styles: [],
-            });
-
-            expect(entry.content).toBe('4;');
-        });
-
-        it('throws if no entry', () => {
-            expect(() =>
-                chrome.analyse({
-                    scripts: [
-                        new ScriptNode({
-                            content: ';',
-                            entry: false,
-                        }),
-                        new ScriptNode({
-                            content: ';',
-                            entry: false,
-                        }),
-                    ],
-                    styles: [],
-                })
-            ).toThrow(/has no js entry/);
-        });
-
-        it('filter invalid style', () => {
-            const { styles } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        content: ';',
-                    }),
-                ],
-                styles: [
-                    new StyleNode({
-                        content: 'div{}',
-                    }),
-                    new StyleNode({}),
-                ],
-            });
-
-            expect(styles).toHaveLength(1);
-        });
-
-        it('scripts before entry and is not async or defer could be dependencies of async entry', () => {
-            const { depScripts, nonDepScripts } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        src: '/a.js',
-                        defer: true,
-                    }),
-                    new ScriptNode({
-                        content: '1;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        content: '2;',
-                    }),
-                    new ScriptNode({
-                        content: '3;',
-                        async: true,
-                        entry: true,
-                    }),
-                    new ScriptNode({
-                        content: '4;',
-                    }),
-                    new ScriptNode({
-                        content: '5;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        src: '/b.js',
-                        defer: true,
-                    }),
-                ],
-                styles: [],
-            });
-
-            expect(depScripts).toHaveLength(1);
-            expect(depScripts[0].content).toBe('2;');
-            expect(nonDepScripts).toHaveLength(5);
-        });
-
-        it('scripts before entry and is not async or other scripts not async or defer could be dependencies of defer entry', () => {
-            const { depScripts, nonDepScripts } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        src: '/a.js',
-                        defer: true,
-                    }),
-                    new ScriptNode({
-                        content: '1;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        content: '2;',
-                    }),
-                    new ScriptNode({
-                        src: '/entry.js',
-                        defer: true,
-                        entry: true,
-                    }),
-                    new ScriptNode({
-                        content: '4;',
-                    }),
-                    new ScriptNode({
-                        content: '5;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        src: '/b.js',
-                        defer: true,
-                    }),
-                ],
-                styles: [],
-            });
-
-            expect(depScripts).toHaveLength(3);
-            expect(depScripts[0].src).toContain('/a.js');
-            expect(depScripts[1].content).toBe('2;');
-            expect(depScripts[2].content).toBe('4;');
-            expect(nonDepScripts).toHaveLength(3);
-        });
-
-        it('scripts before entry and is not async or defer could be dependencies of normal entry', () => {
-            const { depScripts, nonDepScripts } = chrome.analyse({
-                scripts: [
-                    new ScriptNode({
-                        src: '/a.js',
-                        defer: true,
-                    }),
-                    new ScriptNode({
-                        content: '1;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        content: '2;',
-                    }),
-                    new ScriptNode({
-                        src: '/entry.js',
-                        entry: true,
-                    }),
-                    new ScriptNode({
-                        content: '4;',
-                    }),
-                    new ScriptNode({
-                        content: '5;',
-                        async: true,
-                    }),
-                    new ScriptNode({
-                        src: '/b.js',
-                        defer: true,
-                    }),
-                ],
-                styles: [],
-            });
-
-            expect(depScripts).toHaveLength(1);
-            expect(depScripts[0].content).toBe('2;');
-            expect(nonDepScripts).toHaveLength(5);
-        });
-    });
-
-    describe('urlRewrite', () => {
-        it('urlRewrite is nullish', () => {
-            const chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-            });
-
-            const { scripts, styles } = chrome.urlRewrite({
-                scripts: [
-                    new ScriptNode({
-                        src: 'a.js',
-                    }),
-                ],
-                styles: [
-                    new StyleNode({
-                        href: 'a.css',
-                    }),
-                ],
-            });
-
-            expect(scripts).toHaveLength(1);
-            expect(styles).toHaveLength(1);
-            expect(scripts[0].src).toBe('a.js');
-            expect(styles[0].href).toBe('a.css');
-
-            chrome.close();
-        });
-
-        it('urlRewrite is not function', () => {
-            const chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-                // @ts-ignore test
-                urlRewrite: 2,
-            });
-
-            const { scripts, styles } = chrome.urlRewrite({
-                scripts: [
-                    new ScriptNode({
-                        src: 'a.js',
-                    }),
-                ],
-                styles: [
-                    new StyleNode({
-                        href: 'a.css',
-                    }),
-                ],
-            });
-
-            expect(scripts).toHaveLength(1);
-            expect(styles).toHaveLength(1);
-            expect(scripts[0].src).toBe('a.js');
-            expect(styles[0].href).toBe('a.css');
-
-            chrome.close();
-        });
-
-        it('urlRewrite returns not string', () => {
-            const chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-                // @ts-ignore test
-                urlRewrite: (): number => 4,
-            });
-
-            const { scripts, styles } = chrome.urlRewrite({
-                scripts: [
-                    new ScriptNode({
-                        src: 'a.js',
-                    }),
-                ],
-                styles: [
-                    new StyleNode({
-                        href: 'a.css',
-                    }),
-                ],
-            });
-
-            expect(scripts).toHaveLength(1);
-            expect(styles).toHaveLength(1);
-            expect(scripts[0].src).toBe('a.js');
-            expect(styles[0].href).toBe('a.css');
-
-            chrome.close();
-        });
-
-        it('urlRewrite returns right', () => {
-            const urlRewrite = jest.fn((src: string) => {
-                return new URL(src, location.href).href;
-            });
-
-            const chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-                urlRewrite,
-            });
-
-            const { scripts, styles } = chrome.urlRewrite({
-                scripts: [
-                    new ScriptNode({
-                        src: 'a.js',
-                    }),
-                ],
-                styles: [
-                    new StyleNode({
-                        href: 'a.css',
-                    }),
-                ],
-            });
-
-            expect(scripts).toHaveLength(1);
-            expect(styles).toHaveLength(1);
-
-            expect(urlRewrite).toHaveBeenNthCalledWith(1, 'a.js');
-            expect(urlRewrite).toHaveBeenNthCalledWith(2, 'a.css');
-
-            expect(scripts[0].src).toBe('http://localhost/test/a.js');
-            expect(styles[0].href).toBe('http://localhost/test/a.css');
-
-            chrome.close();
-        });
-
-        it('urlRewrite do modify final url', async () => {
-            const urlRewrite = jest.fn((src: string) => {
-                return new URL(src, 'http://localhost:10810').href;
-            });
-
-            const chrome = new Chrome({
-                name: 'foo',
-                sandbox: true,
-                urlRewrite,
-            });
-
-            await chrome.boot({
-                scripts: [
-                    new ScriptNode({
-                        src: `a.js?content=${encodeURIComponent(`module.exports={mount(){},unmount(){}}`)}`,
-                    }),
-                ],
-                styles: [],
-            });
-
-            chrome.close();
-        });
-    });
-
-    describe('boot', () => {
+    describe('launch', () => {
         let chrome: Chrome;
 
         beforeEach(() => {
@@ -512,7 +144,7 @@ describe.only('Chrome', () => {
             chrome.close();
 
             await expect(
-                chrome.boot({
+                chrome.launch({
                     styles: [],
                     scripts: [
                         new ScriptNode({
@@ -523,8 +155,8 @@ describe.only('Chrome', () => {
             ).rejects.toThrow(/has been closed/);
         });
 
-        it('throws later if closed', async () => {
-            const openPromise = chrome.boot({
+        it('throws if closed during loading', async () => {
+            const openPromise = chrome.launch({
                 styles: [
                     new StyleNode({
                         href: `//localhost:10810/chrome/Chrome/style.css?content=${encodeURIComponent(
@@ -547,7 +179,7 @@ describe.only('Chrome', () => {
         });
 
         it('<style> elements are injected in order in "head"', async () => {
-            await chrome.boot({
+            await chrome.launch({
                 styles: [
                     new StyleNode({
                         href: `//localhost:10810/chrome/Chrome/style.css?content=${encodeURIComponent(
@@ -574,7 +206,7 @@ describe.only('Chrome', () => {
         });
 
         it('dependencies scripts are evaluated in order', async () => {
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -598,7 +230,9 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const mounts = toArray(lf.mount);
+            const lf = chrome.lifecycleFns;
+
+            const mounts = toArray(lf?.mount ?? []);
             expect(mounts[0]({ name: 'foo' })).toEqual([1, 2]);
         });
     });
@@ -615,7 +249,7 @@ describe.only('Chrome', () => {
                     content: `globalThis[Math.random()] = {mount(){return 789},unmount(){}}`,
                 })
             );
-            const mounts = toArray(lf.mount);
+            const mounts = toArray(lf?.mount ?? []);
             expect(mounts[0]({ name: 'foo' })).toEqual(789);
         });
 
@@ -634,7 +268,7 @@ describe.only('Chrome', () => {
                 })
             );
 
-            const mounts = toArray(lf.mount);
+            const mounts = toArray(lf?.mount ?? []);
             expect(mounts[0]({ name: 'foo' })).toEqual(789);
         });
 
@@ -650,7 +284,7 @@ describe.only('Chrome', () => {
                 })
             );
 
-            const mounts = toArray(lf.mount);
+            const mounts = toArray(lf?.mount ?? []);
             expect(mounts[0]({ name: 'foo' })).toEqual(789);
         });
     });
@@ -664,7 +298,7 @@ describe.only('Chrome', () => {
                 },
             });
 
-            const open = chrome.boot({
+            const open = chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -685,7 +319,7 @@ describe.only('Chrome', () => {
                 name: 'bar',
             });
 
-            const open = chrome.boot({
+            const open = chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -711,7 +345,7 @@ describe.only('Chrome', () => {
                 sandbox: true,
             });
 
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -725,9 +359,11 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const mounts = toArray(lf.mount);
-            const updates = toArray(lf.update);
-            const unmounts = toArray(lf.unmount);
+            const lf = chrome.lifecycleFns;
+
+            const mounts = toArray(lf?.mount ?? []);
+            const updates = toArray(lf?.update);
+            const unmounts = toArray(lf?.unmount ?? []);
             const currentScript = mounts[0]({ name: 'foo' });
             expect(currentScript).toBeInstanceOf(HTMLScriptElement);
             expect(Reflect.get(currentScript, 'tagName')).toBe('SCRIPT');
@@ -751,7 +387,7 @@ describe.only('Chrome', () => {
                 sandbox: false,
             });
 
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -765,9 +401,11 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const mounts = toArray(lf.mount);
-            const updates = toArray(lf.update);
-            const unmounts = toArray(lf.unmount);
+            const lf = chrome.lifecycleFns;
+
+            const mounts = toArray(lf?.mount ?? []);
+            const updates = toArray(lf?.update);
+            const unmounts = toArray(lf?.unmount ?? []);
             const currentScript = mounts[0]({ name: 'foo' });
             expect(currentScript).toBeInstanceOf(HTMLScriptElement);
             expect(Reflect.get(currentScript, 'tagName')).toBe('SCRIPT');
@@ -859,7 +497,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -868,8 +506,10 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const bootstraps = toArray(lf.bootstrap);
-            const mounts = toArray(lf.mount);
+            const lf = chrome.lifecycleFns;
+
+            const bootstraps = toArray(lf?.bootstrap);
+            const mounts = toArray(lf?.mount ?? []);
 
             if (bootstraps[0]) await bootstraps[0]({ name: 'foo' });
 
@@ -928,7 +568,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -937,8 +577,10 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const bootstraps = toArray(lf.bootstrap);
-            const mounts = toArray(lf.mount);
+            const lf = chrome.lifecycleFns;
+
+            const bootstraps = toArray(lf?.bootstrap);
+            const mounts = toArray(lf?.mount ?? []);
 
             if (bootstraps[0]) await bootstraps[0]({ name: 'foo' });
 
@@ -1011,7 +653,7 @@ describe.only('Chrome', () => {
                 `
             )}`;
 
-            const lf = await chrome.boot({
+            await chrome.launch({
                 styles: [],
                 scripts: [
                     new ScriptNode({
@@ -1020,8 +662,10 @@ describe.only('Chrome', () => {
                 ],
             });
 
-            const bootstraps = toArray(lf.bootstrap);
-            const mounts = toArray(lf.mount);
+            const lf = chrome.lifecycleFns;
+
+            const bootstraps = toArray(lf?.bootstrap);
+            const mounts = toArray(lf?.mount ?? []);
 
             if (bootstraps[0]) await bootstraps[0]({ name: 'foo' });
 
@@ -1061,7 +705,7 @@ describe.only('Chrome', () => {
             loadTime = Date.now();
         });
 
-        await chrome.boot({ scripts: [], styles: [] }).catch(() => {});
+        await chrome.launch({ scripts: [], styles: [] }).catch(() => {});
 
         const timeArray = [
             readystatechangeInteractiveTime,
