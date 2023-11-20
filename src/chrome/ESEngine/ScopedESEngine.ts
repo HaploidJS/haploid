@@ -1,6 +1,7 @@
 import { BaseESEngine } from './BaseESEngine';
+import type { ScriptNode } from '../../node/';
 import { hasOwn } from '../../utils/hasOwn';
-import { nativeWindow, summary } from '../utils';
+import { nativeWindow } from '../utils';
 
 interface NestedContext {
     eval: <T = unknown>(code: string) => T;
@@ -49,15 +50,17 @@ export class ScopedESEngine extends BaseESEngine {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public override execESMScript<T = any>(code: string, src?: string): Promise<T> {
+    protected override execESMScript<T = any>(script: ScriptNode): Promise<T> {
         console.warn(`ESM cannot be evaluated in sandbox temporarily.`);
-        return super.execESMScript(code, src);
+        return super.execESMScript(script);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public override execScript<T = any>(code: string, src?: string): T {
-        this.debug('execScript(%s, %s).', summary(code), src);
-        code = this.fixSourceURL(code, src);
+    protected override onExecScript<T = any>(script: ScriptNode): Promise<T> | T {
+        const { src, content } = script;
+        this.debug('onExecScript(%o).', script);
+
+        const code = this.fixSourceURL(content, src);
         return this.#createScopedEval().eval(code);
     }
 

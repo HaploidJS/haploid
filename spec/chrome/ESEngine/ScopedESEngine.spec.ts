@@ -1,5 +1,6 @@
 import { createESEngine } from '@/chrome/ESEngine/';
 import { WindowNode } from '@/chrome/BOM/';
+import { ScriptNode } from '@/node/';
 
 describe.only('ScopedESEngine', () => {
     describe('env variables', () => {
@@ -7,9 +8,11 @@ describe.only('ScopedESEngine', () => {
             const engine = createESEngine(true, new WindowNode('test', { __DEV__: true }));
 
             expect(
-                engine.execScript(`
-            window.__DEV__
-        `)
+                engine.execScript(
+                    new ScriptNode({
+                        content: `window.__DEV__`,
+                    })
+                )
             ).toBe(true);
 
             // do not leak
@@ -26,9 +29,11 @@ describe.only('ScopedESEngine', () => {
             const engine = createESEngine(true, new WindowNode('test', { __DEV__: true }));
 
             expect(
-                engine.execScript(`
-        __DEV__
-        `)
+                engine.execScript(
+                    new ScriptNode({
+                        content: `__DEV__`,
+                    })
+                )
             ).toBe(true);
 
             // recovered
@@ -46,9 +51,11 @@ describe.only('ScopedESEngine', () => {
             const engine = createESEngine(true, new WindowNode('test', { __DEV__: true }));
 
             expect(
-                engine.execScript(`
-        __DEV__
-        `)
+                engine.execScript(
+                    new ScriptNode({
+                        content: `__DEV__`,
+                    })
+                )
             ).toBe(true);
         });
     });
@@ -57,7 +64,9 @@ describe.only('ScopedESEngine', () => {
         it(`share variables by var in scoped`, () => {
             const engine = createESEngine(true, new WindowNode('test', {}));
 
-            engine.execScript(`
+            engine.execScript(
+                new ScriptNode({
+                    content: `
                 var month = 9;
                 var getVar = function() {
                     try {
@@ -66,22 +75,61 @@ describe.only('ScopedESEngine', () => {
                         return undefined
                     }
                 };
-            `);
-            engine.execScript(`var year = 2018;`);
-            engine.execScript(`
-                const day = 28;
-                let hour = 12;
-            `);
+            `,
+                })
+            );
+            engine.execScript(
+                new ScriptNode({
+                    content: `var year = 2018;`,
+                })
+            );
+            engine.execScript(
+                new ScriptNode({
+                    content: `
+                    const day = 28;
+                    let hour = 12;`,
+                })
+            );
 
-            expect(engine.execScript('month')).toBe(9);
-            expect(engine.execScript('year')).toBe(2018);
+            expect(
+                engine.execScript(
+                    new ScriptNode({
+                        content: 'month',
+                    })
+                )
+            ).toBe(9);
+            expect(
+                engine.execScript(
+                    new ScriptNode({
+                        content: 'year',
+                    })
+                )
+            ).toBe(2018);
 
             // Cannot visit variables declared by let/const
-            expect(engine.execScript('try{day}catch{}')).toBeUndefined();
-            expect(engine.execScript('try{hour}catch{}')).toBeUndefined();
+            expect(
+                engine.execScript(
+                    new ScriptNode({
+                        content: 'try{day}catch{}',
+                    })
+                )
+            ).toBeUndefined();
+            expect(
+                engine.execScript(
+                    new ScriptNode({
+                        content: 'try{hour}catch{}',
+                    })
+                )
+            ).toBeUndefined();
 
             // Variables hoisting not working
-            expect(engine.execScript('getVar()')).toBeUndefined();
+            expect(
+                engine.execScript(
+                    new ScriptNode({
+                        content: 'getVar()',
+                    })
+                )
+            ).toBeUndefined();
 
             // Not escape
             expect(Reflect.has(window, 'month')).toBe(false);

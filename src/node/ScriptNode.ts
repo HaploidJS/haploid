@@ -44,6 +44,10 @@ export class ScriptNode extends ElementNode<ScriptNodeInitProps> {
         return this.type === 'module';
     }
 
+    public set isESM(esm: boolean) {
+        this.props.type = esm ? 'module' : 'text/javascript';
+    }
+
     public get crossOrigin(): CrossOrigin {
         return this.props.crossOrigin;
     }
