@@ -1,5 +1,5 @@
-import { analyse, urlRewrite } from '@/chrome/utils';
-import { ScriptNode, StyleNode } from '@/node/';
+import { analyse, urlRewrite, createFetchResourceOptions } from '../utils';
+import { ScriptNode, StyleNode } from '../../node/';
 
 describe('analyse', () => {
     it('filter invalid script', () => {
@@ -311,4 +311,28 @@ describe('urlRewrite', () => {
     });
 });
 
-describe.skip('createFetchResourceOptions', () => {});
+describe('createFetchResourceOptions', () => {
+    it('fetchResourceOptions in function type', async () => {
+        const rfo = createFetchResourceOptions('a.js', () => ({ timeout: 3 }));
+        expect(rfo).toMatchObject({ timeout: 3 });
+    });
+
+    it('timeout is 5000 by default', async () => {
+        const rfo = createFetchResourceOptions('a.js');
+        expect(rfo).toMatchObject({ timeout: 5000 });
+    });
+
+    it('retries is 0 by default', async () => {
+        const rfo = createFetchResourceOptions('a.js');
+        expect(rfo).toMatchObject({ retries: 0 });
+    });
+
+    it('retries is 0 if illegal', async () => {
+        // @ts-ignore test
+        let rfo = createFetchResourceOptions('a.js', { retries: 'x' });
+        expect(rfo).toMatchObject({ retries: 0 });
+        // @ts-ignore test
+        rfo = createFetchResourceOptions('a.js', { retries: -5 });
+        expect(rfo).toMatchObject({ retries: 0 });
+    });
+});

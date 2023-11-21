@@ -44,6 +44,7 @@ export class Chrome<T = unknown> extends Debugger {
 
         const env = (this.#evalEnv = {
             ...options.envVariables,
+            // TODO only UMD
             module,
             exports,
             require,
@@ -153,29 +154,12 @@ export class Chrome<T = unknown> extends Debugger {
         return this.#windowShadow.node;
     }
 
+    public get windowShadow(): WindowShadow {
+        return this.#windowShadow;
+    }
+
     public get lifecycleFns(): LifecycleFns<T> | undefined {
         return this.#lifecycleFns;
-    }
-
-    #entry: ScriptNode | null = null;
-    #styles: StyleNode[] = [];
-    #depScripts: ScriptNode[] = [];
-    #nonDepScripts: ScriptNode[] = [];
-
-    public get entry(): ScriptNode | null {
-        return this.#entry;
-    }
-
-    public get styles(): StyleNode[] {
-        return this.#styles;
-    }
-
-    public get depScripts(): ScriptNode[] {
-        return this.#depScripts;
-    }
-
-    public get nonDepScripts(): ScriptNode[] {
-        return this.#nonDepScripts;
     }
 
     /**
@@ -196,40 +180,36 @@ export class Chrome<T = unknown> extends Debugger {
         try {
             const { styles, depScripts, nonDepScripts, entry } = analyse(urlRewrite(content, this.#options.urlRewrite));
 
-            this.#styles = styles;
-            this.#depScripts = depScripts;
-            this.#nonDepScripts = nonDepScripts;
-            this.#entry = entry;
-
-            await this.load();
+            await this.load(entry, depScripts, nonDepScripts, styles);
         } finally {
             this.#windowShadow.onLoad();
         }
     }
 
-    public async load(): Promise<void> {
+    public async load(
+        entry: ScriptNode | null,
+        depScripts: ScriptNode[] = [],
+        nonDepScripts: ScriptNode[] = [],
+        styles: StyleNode[] = []
+    ): Promise<void> {
         // ⬇️ Downloading styles should block process.
         await Promise.all(
-            this.#styles.map(s =>
-                s.downloadContent(createFetchResourceOptions(s.href, this.#options.fetchResourceOptions))
-            )
+            styles.map(s => s.downloadContent(createFetchResourceOptions(s.href, this.#options.fetchResourceOptions)))
         );
         // Downloading contents costs so much time, we have to check if this chrome has already exited.
         if (this.#isClosed) throw Error(`${this} has been closed.`);
 
-        this.#createStyleElements(this.#styles);
+        this.#createStyleElements(styles);
 
-        this.debug('Download and evaluate dependency scripts: %O.', this.#depScripts.join('\n'));
+        this.debug('Download and evaluate dependency scripts: %O.', depScripts.join('\n'));
 
         let indexWaitToExecute = 0;
 
-        const downloadedRecord = new Array<boolean>(this.#depScripts.length).fill(false);
+        const downloadedRecord = new Array<boolean>(depScripts.length).fill(false);
 
         await Promise.all([
-            this.#entry?.downloadContent(
-                createFetchResourceOptions(this.#entry.src, this.#options.fetchResourceOptions)
-            ),
-            ...this.#depScripts.map((s, i) =>
+            entry?.downloadContent(createFetchResourceOptions(entry.src, this.#options.fetchResourceOptions)),
+            ...depScripts.map((s, i) =>
                 s
                     .downloadContent(createFetchResourceOptions(s.src, this.#options.fetchResourceOptions))
                     .then(() => {
@@ -237,7 +217,7 @@ export class Chrome<T = unknown> extends Debugger {
                         if (i === indexWaitToExecute) {
                             let j = i;
                             while (j < downloadedRecord.length && downloadedRecord[j]) {
-                                this.#execScriptNode(this.#depScripts[j]);
+                                this.#execScriptNode(depScripts[j]);
                                 j += 1;
                             }
                             indexWaitToExecute = j;
@@ -251,24 +231,24 @@ export class Chrome<T = unknown> extends Debugger {
 
         // Evaluate non-dependency scripts, don't block process.
         setTimeout(async () => {
-            if (!this.#nonDepScripts.length) {
+            if (!nonDepScripts.length) {
                 return;
             }
 
-            this.debug('Evaluate non-dependency scripts:\n%s.', this.#nonDepScripts.join('\n'));
+            this.debug('Evaluate non-dependency scripts:\n%s.', nonDepScripts.join('\n'));
 
             // ⬇️ Download non-dependency scripts.
             await Promise.all(
-                this.#nonDepScripts.map(s =>
+                nonDepScripts.map(s =>
                     s.downloadContent(createFetchResourceOptions(s.src, this.#options.fetchResourceOptions))
                 )
             );
 
             if (this.#isClosed) return;
-            this.#nonDepScripts.forEach(s => this.#execScriptNode(s));
+            nonDepScripts.forEach(s => this.#execScriptNode(s));
         });
 
-        if (this.#entry) this.#lifecycleFns = await this.executeEntryAndGetLifecycle(this.#entry);
+        if (entry) this.#lifecycleFns = await this.executeEntryAndGetLifecycle(entry);
     }
 
     public executeEntryAndGetLifecycle<T>(entry: ScriptNode): Promise<LifecycleFns<T> | undefined> {
