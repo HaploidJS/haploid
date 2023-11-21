@@ -94,24 +94,6 @@ describe.only('Chrome', () => {
         chrome.close();
     });
 
-    it('prefer presetBodyHTML than domWrapper', async () => {
-        const chrome = new Chrome({
-            name: 'foo',
-            presetBodyHTML: `<script></script>
-            <base/>
-            <title></title>
-            <div contenteditable onclick=""></div>`,
-            domWrapper: '<div id="app"></div><center></center>',
-        });
-
-        expect(chrome.bodyElement.childElementCount).toBe(1); // div
-        expect(chrome.bodyElement.firstElementChild?.classList.contains('haploid-app-root')).toBe(true);
-        expect(chrome.bodyElement.firstElementChild?.hasAttribute('contenteditable')).toBe(false);
-        expect(chrome.bodyElement.firstElementChild?.hasAttribute('onclick')).toBe(false);
-
-        chrome.close();
-    });
-
     it('set title', async () => {
         const chrome = new Chrome({
             name: 'foo',

@@ -66,9 +66,7 @@ export class Chrome<T = unknown> extends Debugger {
 
         this.headElement.appendChild(PresetDOMParser.parseHeadElement(options.presetHeadHTML ?? ''));
 
-        this.bodyElement.appendChild(
-            PresetDOMParser.parseBodyElement(options.presetBodyHTML ?? options.domWrapper ?? '', options.baseURI)
-        );
+        this.bodyElement.appendChild(PresetDOMParser.parseBodyElement(options.presetBodyHTML ?? '', options.baseURI));
 
         if (options.title) {
             this.titleElement.textContent = options.title;

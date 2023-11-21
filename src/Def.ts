@@ -140,10 +140,6 @@ export interface WindowOptions extends WindowOptionsFromSettingOnly, WindowOptio
 export type Sandbox = boolean | (WindowOptionsFromSettingOnly & DocumentOptionsFromSettingOnly);
 
 export interface ESEngineOptions {
-    /**
-     * Prefer evalation by iife.
-     */
-    iife?: boolean;
     /** Enable strict mode, default is true. */
     useStrict?: boolean;
 }
@@ -155,11 +151,6 @@ export interface ResourceFetchingOptions extends RequestInit {
 
 export interface ChromeOptionsFromSettingOnly {
     name: string;
-    /**
-     * Use "presetBodyHTML" instead.
-     * @deprecated
-     */
-    domWrapper?: string;
     /** Sandbox settings. */
     sandbox?: Sandbox;
     /** Global variables when evalating JS. */
