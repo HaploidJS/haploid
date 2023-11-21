@@ -12,7 +12,7 @@ const specFiles = process.argv.slice(2);
 let singletonTest = false;
 
 if (!specFiles.length) {
-    specFiles.push('./spec', './src');
+    specFiles.push('./src/.*/__tests__/.*.spec.ts');
 } else {
     singletonTest = true;
 }

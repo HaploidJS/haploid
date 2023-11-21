@@ -13,7 +13,7 @@ const { compilerOptions } = JSON.parse(
 const exports = {
     preset: 'ts-jest/presets/js-with-babel',
     testEnvironment: 'jsdom',
-    coveragePathIgnorePatterns: ['.js', 'spec'],
+    coveragePathIgnorePatterns: ['.js', '__tests__'],
     testEnvironmentOptions: {
         url: 'http://localhost/test/',
         runScripts: 'dangerously',
