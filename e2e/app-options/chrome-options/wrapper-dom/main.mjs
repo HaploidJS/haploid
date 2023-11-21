@@ -22,19 +22,19 @@ container.registerApps([
     },
     {
         name: 'mutiple-elements',
-        domWrapper: '<div></div><div></div>',
+        presetBodyHTML: '<div></div><div></div>',
         activeWhen: '#/mutiple-elements',
         lifecycle,
     },
     {
         name: 'no-elements',
-        domWrapper: 'TEXT<!-->XX',
+        presetBodyHTML: 'TEXT<!-->XX',
         activeWhen: '#/no-elements',
         lifecycle,
     },
     {
         name: 'filter-tags',
-        domWrapper: `
+        presetBodyHTML: `
             <script></script>
             <body></body>
             <html></html>
@@ -60,13 +60,13 @@ document.querySelector('form').addEventListener('submit', e => {
     e.preventDefault();
     const tx = document.querySelector('textarea');
     const er = document.querySelector('p.error');
-    const domWrapper = tx.value;
+    const presetBodyHTML = tx.value;
     tx.value = '';
     er.innerHTML = '';
 
     container.registerApp({
         name: 'never',
-        domWrapper,
+        presetBodyHTML,
         activeWhen: '#/never',
         lifecycle,
     });
