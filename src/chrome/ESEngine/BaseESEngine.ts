@@ -1,4 +1,5 @@
 import type { WindowShadow } from '../BOM/interfaces';
+import { ScopedEvaluator } from './ScopedEvaluator';
 import type { ESEngineOptions } from '../../Def';
 import { Debugger } from '../../utils/Debugger';
 import type { ScriptNode } from '../../node/';
@@ -7,23 +8,30 @@ import type { ESEngine } from './interfaces';
 export abstract class BaseESEngine extends Debugger implements ESEngine {
     readonly #windowShadow: WindowShadow;
     readonly #options: ESEngineOptions;
+    readonly #scopedEvaluator: ScopedEvaluator;
 
     constructor(windowShadow: WindowShadow, options: ESEngineOptions = {}) {
         super();
         this.#windowShadow = windowShadow;
         this.#options = options;
+
+        this.#scopedEvaluator = new ScopedEvaluator({
+            useStrict: options.useStrict,
+            env: windowShadow.shadow,
+            global: windowShadow.node,
+        });
     }
 
-    protected get windowShadow(): WindowShadow {
+    protected get scopedEvaluator(): ScopedEvaluator {
+        return this.#scopedEvaluator;
+    }
+
+    public get windowShadow(): WindowShadow {
         return this.#windowShadow;
     }
 
     protected get options(): ESEngineOptions {
         return this.#options;
-    }
-
-    protected get useStrict(): boolean {
-        return !(this.#options.useStrict === false);
     }
 
     protected fixSourceURL(code: string, src?: string): string {
@@ -32,7 +40,7 @@ export abstract class BaseESEngine extends Debugger implements ESEngine {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public execScript<T = any>(script: ScriptNode, onBefore?: () => any, onAfter?: () => any): Promise<T> | T {
+    public execScript<T = any>(script: ScriptNode, onBefore?: () => any, onAfter?: () => any): Promise<T> | void {
         onBefore?.();
 
         let ret: Promise<T> | T;
@@ -40,7 +48,8 @@ export abstract class BaseESEngine extends Debugger implements ESEngine {
             if (script.isESM) {
                 ret = this.execESMScript<T>(script);
             } else {
-                ret = this.onExecScript<T>(script);
+                this.execNonESMScript(script);
+                return;
             }
         } finally {
             onAfter?.();
@@ -50,7 +59,7 @@ export abstract class BaseESEngine extends Debugger implements ESEngine {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    protected abstract onExecScript<T = any>(script: ScriptNode): Promise<T> | T;
+    protected abstract execNonESMScript(script: ScriptNode): void;
 
     // TODO support inline ESM
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

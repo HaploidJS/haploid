@@ -211,21 +211,21 @@ describe.only('Chrome', () => {
                 scripts: [
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/base0.js?content=${encodeURIComponent(
-                            `var records = []`
+                            `window.records = []`
                         )}&delay=800`,
                     }),
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/base1.js?content=${encodeURIComponent(
-                            `records.push(1)`
+                            `window.records.push(1)`
                         )}&delay=200`,
                     }),
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/base2.js?content=${encodeURIComponent(
-                            `records.push(2)`
+                            `window.records.push(2)`
                         )}&delay=600`,
                     }),
                     new ScriptNode({
-                        content: 'module.exports={mount(){return records},unmount(){}}',
+                        content: 'module.exports={mount(){return window.records},unmount(){}}',
                     }),
                 ],
             });
@@ -350,11 +350,11 @@ describe.only('Chrome', () => {
                 scripts: [
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/currentScript.js?content=${encodeURIComponent(
-                            `var currentScript = document.currentScript;`
+                            `window.currentScript = document.currentScript;`
                         )}`,
                     }),
                     new ScriptNode({
-                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
+                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return window.currentScript;},unmount(){return document.currentScript;}}`,
                     }),
                 ],
             });
@@ -392,11 +392,11 @@ describe.only('Chrome', () => {
                 scripts: [
                     new ScriptNode({
                         src: `//localhost:10810/chrome/Chrome/currentScript.js?content=${encodeURIComponent(
-                            `var currentScript = document.currentScript;`
+                            `window.currentScript = document.currentScript;`
                         )}`,
                     }),
                     new ScriptNode({
-                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return currentScript;},unmount(){return document.currentScript;}}`,
+                        content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return window.currentScript;},unmount(){return document.currentScript;}}`,
                     }),
                 ],
             });
