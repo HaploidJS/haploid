@@ -329,7 +329,7 @@ export class Chrome<T = unknown> extends Debugger {
             return Promise.resolve(exported.__HAPLOID_LIFECYCLE_EXPORT__);
         }
 
-        return exported;
+        return exported as LifecycleFns<T>;
     }
 
     #createInlineStyle(style: StyleNode): HTMLStyleElement {
@@ -357,7 +357,7 @@ export class Chrome<T = unknown> extends Debugger {
         return styleElement;
     }
 
-    #execScriptNode<T = unknown>(script: ScriptNode, scriptElement?: HTMLScriptElement): Promise<T> | T {
+    #execScriptNode<T = unknown>(script: ScriptNode, scriptElement?: HTMLScriptElement): Promise<T> | void {
         this.debug(`Call #execScriptNode(%o).`, script);
         return this.#esEngine.execScript(
             script,

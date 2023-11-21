@@ -9,7 +9,7 @@ const { compilerOptions } = JSON.parse(
     fs.readFileSync(path.join(__dirname, './tsconfig.common.json'), { encoding: 'utf8' }).toString()
 );
 
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 const exports = {
     preset: 'ts-jest/presets/js-with-babel',
     testEnvironment: 'jsdom',

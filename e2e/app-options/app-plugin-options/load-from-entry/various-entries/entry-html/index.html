@@ -24,7 +24,7 @@
     <body>
         <!-- this runs before foo.mjs -->
         <script>
-            var count = 1;
+            window.count = 1;
         </script>
         <!-- this runs after foo.mjs -->
         <script defer src="./finally.js"></script>
