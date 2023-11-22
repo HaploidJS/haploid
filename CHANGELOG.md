@@ -1,3 +1,14 @@
+# [2.0.0-next.20231122.21](https://github.com/HaploidJS/haploid/compare/v1.2.0...v2.0.0-next.20231122.21) (2023-11-22)
+
+### Features
+
+-   dropURLFixInCSSByStyleSheet is enabled by default ([064800c](https://github.com/HaploidJS/haploid/commit/064800c3201cb986f8183f067378308572c4426f))
+-   introduce jsExportType option ([39f533a](https://github.com/HaploidJS/haploid/commit/39f533aa8c076a06746f254d245c1e1514253cf5))
+-   remove iife and domWrapper ([0a9bc7f](https://github.com/HaploidJS/haploid/commit/0a9bc7f5e617f09ddc28ec69ce0cbb522a9bb149))
+-   rename UMDExportResolver to GlobalExportResolver ([68d5a93](https://github.com/HaploidJS/haploid/commit/68d5a93018e665f7cb00a8d32e04276836e0e3ac))
+-   support externals option ([d5f83d4](https://github.com/HaploidJS/haploid/commit/d5f83d48072646c97e85ad89c12dd9dd07196eb2))
+-   support real UMD ([39b36a5](https://github.com/HaploidJS/haploid/commit/39b36a50d98bd73c87e5eb5896c54677b8b3b1f3))
+
 ## 1.2.0 (2023-11-14)
 
 -   test: refactor e2e ([28fe637](https://github.com/HaploidJS/haploid/commit/28fe637))
