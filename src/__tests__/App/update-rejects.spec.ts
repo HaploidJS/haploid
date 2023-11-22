@@ -1,6 +1,6 @@
 import { delay } from '../../../spec/test-utils';
 import { createApp } from './utils';
-import { AppState } from '@/App';
+import { AppState } from '../../App';
 
 describe.only(`update-rejects`, () => {
     it(`update() rejected if no update lifecycle defined`, async () => {

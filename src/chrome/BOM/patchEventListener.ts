@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { baseDebugger } from '@/utils/Debugger';
+import { baseDebugger } from '../../utils/Debugger';
 
 const debug = baseDebugger.extend('eventListenerPatcher');
 

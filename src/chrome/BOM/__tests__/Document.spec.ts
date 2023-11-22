@@ -1,5 +1,5 @@
-import { DocumentNode } from '@/chrome/BOM/Document';
-import { WindowNode } from '@/chrome/BOM/Window';
+import { DocumentNode } from '../Document';
+import { WindowNode } from '../Window';
 import { delay } from '../../../../spec/test-utils';
 
 describe.only('Document', () => {

@@ -1,4 +1,4 @@
-import { Atomic } from '@/Atomic';
+import { Atomic } from '../../Atomic';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('wait-for', () => {

@@ -1,7 +1,7 @@
 import { delay } from '../../../spec/test-utils';
-import { AppState, App } from '@/App';
+import { AppState, App } from '../../App';
 import { createApp } from './utils';
-import { LifecycleFns } from '@/Def';
+import { LifecycleFns } from '../../Def';
 
 describe.only(`happy-stop`, () => {
     it(`traverse all unmount fns`, async () => {

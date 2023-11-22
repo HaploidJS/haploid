@@ -1,6 +1,6 @@
-import { RouterContainer, navigateToUrl } from '@/index';
-import { parseUri } from '@/utils/navigateToUrl';
-import { RouterNavigation, getUniversalRouter } from '@/Router';
+import { RouterContainer, navigateToUrl } from '../../index';
+import { parseUri } from '../../utils/navigateToUrl';
+import { RouterNavigation, getUniversalRouter } from '../../Router';
 import { delay } from '../../../spec/test-utils';
 
 type LocalRouterNavigation = Omit<RouterNavigation, 'isCanceled'>;

@@ -1,6 +1,6 @@
-import { ManualContainer, RouterContainer, navigateToUrl } from '@/index';
-import { AppLocation } from '@/Def';
-import { smellsLikeAPromise } from '@/utils/smellsLikeAPromise';
+import { ManualContainer, RouterContainer, navigateToUrl } from '../../index';
+import { AppLocation } from '../../Def';
+import { smellsLikeAPromise } from '../../utils/smellsLikeAPromise';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`happy-destroy`, () => {

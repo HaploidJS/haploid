@@ -1,5 +1,5 @@
 import { createLifecycle } from './utils';
-import { Lifecycle } from '@/Lifecycle';
+import { Lifecycle } from '../../Lifecycle';
 
 describe.only('fns', () => {
     it('default fns is null', async () => {

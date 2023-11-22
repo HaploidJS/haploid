@@ -1,9 +1,8 @@
-import { AppState, App } from '@/App';
+import { AppState, App } from '../../App';
 
 describe.only(`safe-properties`, () => {
     const app = new App<Record<never, never>, { user: string }>({
         name: 'foo',
-        entry: 'x',
         customProps: (): { user: string } => ({
             user: 'jake',
         }),

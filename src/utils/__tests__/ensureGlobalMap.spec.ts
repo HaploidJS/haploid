@@ -1,4 +1,4 @@
-import { ensureGlobalMap, ensureGlobalWeakMap } from '@/utils/ensureGlobalMap';
+import { ensureGlobalMap, ensureGlobalWeakMap } from '../../utils/ensureGlobalMap';
 
 describe('ensureGlobalMap', () => {
     it('ensure a string key', async () => {

@@ -1,4 +1,4 @@
-import { toAbsolutePath } from '@/utils/url';
+import { toAbsolutePath } from '../../utils/url';
 
 describe('toAbsolutePath', () => {
     it('relative path works', () => {

@@ -1,4 +1,4 @@
-import { LRUStorage } from '@/utils/LRU-Storage';
+import { LRUStorage } from '../LRU-Storage';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('LRU-Storage', () => {
@@ -43,11 +43,11 @@ describe.only('LRU-Storage', () => {
         });
 
         lru.touch('a');
-        await delay(10);
+        await delay(20);
         lru.touch('b');
-        await delay(10);
+        await delay(20);
         lru.touch('c');
-        await delay(10);
+        await delay(20);
         lru.touch('d');
 
         const cache = lru.getCollection();

@@ -1,9 +1,9 @@
-import { ScriptNode } from '@/node';
-import { toArray } from '@/utils/toArray';
+import { ScriptNode } from '../../node';
+import { toArray } from '../../utils/toArray';
 import { delay } from '../../../spec/test-utils';
 import { createApp } from './utils';
-import { App } from '@/App';
-import { LifecycleFns } from '@/Def';
+import { App } from '../../App';
+import { LifecycleFns } from '../../Def';
 
 describe.only(`happy-load`, () => {
     it('load calls resolveAssets and resolveEnvVariables', async () => {

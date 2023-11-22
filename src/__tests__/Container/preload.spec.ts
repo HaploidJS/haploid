@@ -1,4 +1,4 @@
-import { ManualContainer } from '@/index';
+import { ManualContainer } from '../../index';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('preload', () => {

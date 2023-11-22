@@ -1,6 +1,6 @@
 import { delay } from '../../../spec/test-utils';
-import { LifecycleFns } from '@/Def';
-import { App } from '@/App';
+import { LifecycleFns } from '../../Def';
+import { App } from '../../App';
 
 export function createApp<T = Record<never, never>>(
     lifecycles?: Partial<LifecycleFns<T>>,

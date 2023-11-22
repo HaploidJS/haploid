@@ -1,4 +1,4 @@
-import { HAPLOID_SCRIPT_TAG_NAME, createPseudoScriptElement } from '@/utils/PseudoElement';
+import { HAPLOID_SCRIPT_TAG_NAME, createPseudoScriptElement } from '../../utils/PseudoElement';
 
 describe.only('PseudoElement', () => {
     let script: ReturnType<typeof createPseudoScriptElement>;

@@ -1,4 +1,4 @@
-import { RouterContainer } from '@/index';
+import { RouterContainer } from '../../index';
 
 describe.only(`patch-history`, () => {
     const rawPush = history.pushState;

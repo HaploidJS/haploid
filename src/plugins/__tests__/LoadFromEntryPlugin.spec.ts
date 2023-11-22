@@ -1,7 +1,7 @@
-import { createLoadFromEntryPlugin } from '@/plugins/LoadFromEntryPlugin';
-import { App } from '@/App';
-import { baseDebugger } from '@/utils/Debugger';
-import { toArray } from '@/utils/toArray';
+import { createLoadFromEntryPlugin } from '../../plugins/LoadFromEntryPlugin';
+import { App } from '../../App';
+import { baseDebugger } from '../../utils/Debugger';
+import { toArray } from '../../utils/toArray';
 
 describe.only('LoadFromEntryPlugin', () => {
     const debug = baseDebugger.extend('test:LoadFromEntryPlugin');

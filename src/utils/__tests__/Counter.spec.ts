@@ -1,4 +1,4 @@
-import { Counter } from '@/utils/Counter';
+import { Counter } from '../../utils/Counter';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('Counter', () => {

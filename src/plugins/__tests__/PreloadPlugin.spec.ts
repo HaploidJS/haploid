@@ -1,7 +1,7 @@
-import { createPreloadPlugin } from '@/plugins/PreloadPlugin';
-import { App } from '@/App';
-import { LifecycleFns } from '@/Def';
-import { baseDebugger } from '@/utils/Debugger';
+import { createPreloadPlugin } from '../../plugins/PreloadPlugin';
+import { App } from '../../App';
+import { LifecycleFns } from '../../Def';
+import { baseDebugger } from '../../utils/Debugger';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`PreloadPlugin`, () => {

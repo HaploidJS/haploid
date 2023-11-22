@@ -1,4 +1,4 @@
-import { ScriptNode } from '@/node/';
+import { ScriptNode } from '../../node/';
 
 describe.only('script', () => {
     describe('isInline', () => {

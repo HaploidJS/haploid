@@ -1,4 +1,4 @@
-import { asyncSequence } from '@/utils/asyncSequence';
+import { asyncSequence } from '../../utils/asyncSequence';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('asyncSequence', () => {

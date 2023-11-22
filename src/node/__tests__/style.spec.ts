@@ -1,4 +1,4 @@
-import { StyleNode } from '@/node/';
+import { StyleNode } from '../../node/';
 
 describe.only('style', () => {
     describe('isInline', () => {

@@ -1,4 +1,4 @@
-import { ManualContainer } from '@/index';
+import { ManualContainer } from '../../index';
 
 describe.only(`safe-properties`, () => {
     let container: ManualContainer;

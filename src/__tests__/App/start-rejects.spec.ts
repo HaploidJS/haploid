@@ -1,7 +1,7 @@
 import { delay } from '../../../spec/test-utils';
 import { createApp } from './utils';
-import { AppState, App } from '@/App';
-import { LifecycleFns } from '@/Def';
+import { AppState, App } from '../../App';
+import { LifecycleFns } from '../../Def';
 
 describe.only(`start-rejects`, () => {
     it(`start() rejected if bootstrap lifecycle not defined`, async () => {

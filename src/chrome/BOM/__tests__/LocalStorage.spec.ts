@@ -1,4 +1,4 @@
-import { LocalStorageNode } from '@/chrome/BOM/LocalStorage';
+import { LocalStorageNode } from '../LocalStorage';
 
 describe.only('LocalStorage', () => {
     let ls: LocalStorageNode;

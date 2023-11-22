@@ -1,4 +1,4 @@
-import { getUniversalDownloader } from '@/Downloader';
+import { getUniversalDownloader } from '../../Downloader';
 import { delay } from '../../../spec/test-utils';
 
 describe.only('download', () => {

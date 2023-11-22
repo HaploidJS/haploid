@@ -1,5 +1,5 @@
 import { delay, createRoot, removeRoot } from '../../../spec/test-utils';
-import { ManualContainer, navigateToUrl } from '@/index';
+import { ManualContainer, navigateToUrl } from '../../index';
 
 describe.only(`happy-create`, () => {
     let container: ManualContainer;

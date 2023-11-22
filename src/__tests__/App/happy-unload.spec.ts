@@ -1,6 +1,6 @@
 import { delay } from '../../../spec/test-utils';
 import { createApp } from './utils';
-import { AppState } from '@/App';
+import { AppState } from '../../App';
 
 describe.only(`happy-unload`, () => {
     it(`unmount and revert state`, async () => {

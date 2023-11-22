@@ -5,7 +5,7 @@ import {
     createNodeListOf,
     createStyleSheetList,
     createDocumentRootElement,
-} from '@/chrome/BOM/utils';
+} from '../utils';
 
 describe.only('utils', () => {
     describe('createHTMLCollection', () => {

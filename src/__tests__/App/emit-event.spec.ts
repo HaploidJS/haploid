@@ -1,6 +1,6 @@
-import { LifecycleFns } from '@/Def';
+import { LifecycleFns } from '../../Def';
 import { createApp } from './utils';
-import { App } from '@/App';
+import { App } from '../../App';
 
 describe.only(`emit-event`, () => {
     it('emit statechange', async () => {

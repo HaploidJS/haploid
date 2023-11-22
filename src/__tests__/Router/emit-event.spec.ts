@@ -1,5 +1,5 @@
-import { getUniversalRouter } from '@/Router';
-import { navigateToUrl } from '@/index';
+import { getUniversalRouter } from '../../Router';
+import { navigateToUrl } from '../../index';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`emit-event`, () => {

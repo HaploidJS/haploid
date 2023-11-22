@@ -1,4 +1,4 @@
-import { NodeProxy } from '@/chrome/BOM/NodeProxy';
+import { NodeProxy } from '../NodeProxy';
 
 interface Plain extends EventTarget {
     [key: string]: unknown;
