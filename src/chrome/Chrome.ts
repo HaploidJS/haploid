@@ -21,9 +21,6 @@ export class Chrome<T = unknown> extends Debugger {
 
     readonly #windowShadow: WindowShadow;
     readonly #esEngine: ESEngine;
-    readonly #evalEnv: Record<PropertyKey, unknown> & { module: { exports: unknown } };
-
-    readonly #originalExports = {};
 
     #lifecycleFns: LifecycleFns<T> | undefined = undefined;
 
@@ -35,25 +32,10 @@ export class Chrome<T = unknown> extends Debugger {
 
         const sandbox = parseSandbox(options.sandbox);
 
-        const exports = this.#originalExports;
-        const module = { exports };
-
-        const require = (key: string): void => {
-            this.debug('Call require(%s).', key);
-        };
-
-        const env = (this.#evalEnv = {
-            ...options.envVariables,
-            // TODO only UMD
-            module,
-            exports,
-            require,
-        });
-
         this.#windowShadow = sandbox
             ? new WindowNode(
                   options.name,
-                  env,
+                  options.envVariables ?? {},
                   /* document options */
                   {
                       ...sandbox,
@@ -63,7 +45,7 @@ export class Chrome<T = unknown> extends Debugger {
                   /* window options */
                   sandbox
               )
-            : new RawWindowNode(env);
+            : new RawWindowNode(options.envVariables ?? {});
 
         this.headElement.appendChild(PresetDOMParser.parseHeadElement(options.presetHeadHTML ?? ''));
 
@@ -288,11 +270,24 @@ export class Chrome<T = unknown> extends Debugger {
     }
 
     #executeEntryAndGetLifecycleByUMD<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
-        this.#execScriptNode(entry);
-        // TODO check retry
-        if (this.#evalEnv.module.exports !== this.#originalExports) {
+        const originalExports = {};
+        const exports = originalExports;
+        const module = { exports };
+
+        const require = (key: string): unknown => {
+            this.debug('Call require(%s).', key);
+            return this.#options.externals ? Reflect.get(this.#options.externals, key) : undefined;
+        };
+
+        this.#execScriptNode(entry, undefined, {
+            exports,
+            module,
+            require,
+        });
+
+        if (module.exports !== originalExports) {
             // exports has been set!
-            return Promise.resolve(this.#evalEnv.module.exports as LifecycleFns<T>);
+            return Promise.resolve(module.exports as LifecycleFns<T>);
         }
 
         throw Error(`Cannot find UMD exports from ${entry.src}.`);
@@ -335,35 +330,17 @@ export class Chrome<T = unknown> extends Debugger {
         return styleElement;
     }
 
-    #execScriptNode<T = unknown>(script: ScriptNode, scriptElement?: HTMLScriptElement): Promise<T> | void {
+    #execScriptNode<T = unknown>(
+        script: ScriptNode,
+        scriptElement?: HTMLScriptElement,
+        env?: Record<string, unknown>
+    ): Promise<T> | void {
         this.debug(`Call #execScriptNode(%o).`, script);
-        return this.#esEngine.execScript(
-            script,
-            () => {
-                if (!scriptElement) scriptElement = this.#insertPseudoScript(script);
-
-                if (!script.isESM) {
-                    Reflect.defineProperty(this.window.document, 'currentScript', {
-                        get() {
-                            return scriptElement;
-                        },
-                        configurable: true,
-                        enumerable: true,
-                    });
-                }
-            },
-            () => {
-                if (!script.isESM) {
-                    Reflect.defineProperty(this.window.document, 'currentScript', {
-                        get() {
-                            return null;
-                        },
-                        configurable: true,
-                        enumerable: true,
-                    });
-                }
-            }
-        );
+        if (!scriptElement) scriptElement = this.#insertPseudoScript(script);
+        return this.#esEngine.execScript(script, {
+            scriptElement,
+            env,
+        });
     }
 
     /**

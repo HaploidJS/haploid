@@ -161,7 +161,10 @@ export interface ChromeOptionsFromSettingOnly {
     urlRewrite?: (url: string) => string;
     /** If true, URL is fixed only by regular expression in CSS. */
     dropURLFixInCSSByStyleSheet?: boolean;
+    /** Explicitly specify js export type. */
     jsExportType?: JSExportType;
+    /** Require external modules. */
+    externals?: Record<string, unknown>;
 }
 
 export interface ChromeOptionsFromResolvingOrSetting {

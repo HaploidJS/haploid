@@ -5,6 +5,12 @@ import { Debugger } from '../../utils/Debugger';
 import type { ScriptNode } from '../../node/';
 import type { ESEngine } from './interfaces';
 
+type ARGS = Parameters<ESEngine['execScript']>;
+
+export type ExecHook = (...args: ARGS) => void;
+
+export type ExecHooksPair = { before?: ExecHook; after?: ExecHook };
+
 export abstract class BaseESEngine extends Debugger implements ESEngine {
     readonly #windowShadow: WindowShadow;
     readonly #options: ESEngineOptions;
@@ -40,26 +46,79 @@ export abstract class BaseESEngine extends Debugger implements ESEngine {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public execScript<T = any>(script: ScriptNode, onBefore?: () => any, onAfter?: () => any): Promise<T> | void {
-        onBefore?.();
-
-        let ret: Promise<T> | T;
-        try {
-            if (script.isESM) {
-                ret = this.execESMScript<T>(script);
-            } else {
-                this.execNonESMScript(script);
-                return;
-            }
-        } finally {
-            onAfter?.();
+    public execScript<T = any>(
+        script: ScriptNode,
+        options?: {
+            env?: Record<string, unknown>;
+            scriptElement?: HTMLScriptElement;
         }
-
-        return ret;
+    ): Promise<T> | void {
+        if (script.isESM) {
+            const hooks = this.getExecESMHooks();
+            try {
+                hooks.forEach(hook => hook.before?.(script, options));
+            } catch {
+                // ignore
+            }
+            return this.execESMScript<T>(script).finally(() => {
+                hooks.forEach(hook => hook.after?.(script, options));
+            });
+        } else {
+            const hooks = this.getExecNonESMHooks();
+            try {
+                hooks.forEach(hook => hook.before?.(script, options));
+            } catch {
+                // ignore
+            }
+            try {
+                this.execNonESMScript(script, options?.env);
+            } finally {
+                try {
+                    hooks.forEach(hook => hook.after?.(script, options));
+                } catch {
+                    //ignore
+                }
+            }
+        }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    protected abstract execNonESMScript(script: ScriptNode): void;
+    protected getExecESMHooks(): ExecHooksPair[] {
+        return [];
+    }
+
+    protected getExecNonESMHooks(): ExecHooksPair[] {
+        return [
+            // "currentScript"
+            {
+                before: (script, options): void => {
+                    Reflect.defineProperty(this.#windowShadow.node.document, 'currentScript', {
+                        get() {
+                            return options?.scriptElement;
+                        },
+                        configurable: true,
+                        enumerable: true,
+                    });
+                },
+                after: (): void => {
+                    Reflect.defineProperty(this.#windowShadow.node.document, 'currentScript', {
+                        get() {
+                            return null;
+                        },
+                        configurable: true,
+                        enumerable: true,
+                    });
+                },
+            },
+        ];
+    }
+
+    protected execNonESMScript(script: ScriptNode, env?: Record<string, unknown>): void {
+        const { src, content } = script;
+        this.debug('execNonESMScript(%o).', script);
+
+        const code = this.fixSourceURL(content, src);
+        this.scopedEvaluator.evaluate(code, env);
+    }
 
     // TODO support inline ESM
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

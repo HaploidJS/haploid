@@ -124,6 +124,21 @@ describe('executeEntryAndGetLifecycle', () => {
         expect(mounts[0]({ name: 'foo' })).toEqual(789);
     });
 
+    it('has no module/exports/require when jsExportType=global', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            jsExportType: 'global',
+        });
+        const lf = await chrome.executeEntryAndGetLifecycle(
+            new ScriptNode({
+                content: `globalThis[Math.random()] = {mount(){return [typeof module, typeof exports, typeof require]},unmount(){}}`,
+            })
+        );
+        const mounts = toArray(lf?.mount ?? []);
+        expect(mounts[0]({ name: 'foo' })).toMatchObject(['undefined', 'undefined', 'undefined']);
+    });
+
     it('jsExportType=esm', async () => {
         const chrome = new Chrome({
             name: 'foo',
@@ -157,7 +172,29 @@ describe('executeEntryAndGetLifecycle', () => {
         expect(mounts[0]({ name: 'foo' })).toEqual(789);
     });
 
-    it('refer isESM when jsExportType=undefined', async () => {
+    it('require external when jsExportType=umd', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            jsExportType: 'umd',
+            presetBodyHTML: '<div id="foo"></foo>',
+            externals: {
+                jquery: function (selector: string): Element | null {
+                    return chrome.window.document.querySelector(selector);
+                },
+            },
+        });
+        const lf = await chrome.executeEntryAndGetLifecycle(
+            new ScriptNode({
+                content: `const $ = require('jquery');if(typeof exports === 'object' && typeof module === 'object') module.exports = {mount(){return $('#foo');},unmount(){}}`,
+            })
+        );
+
+        const mounts = toArray(lf?.mount ?? []);
+        expect(mounts[0]({ name: 'foo' })).toBeInstanceOf(Element);
+    });
+
+    it('refer to isESM when jsExportType=undefined', async () => {
         const chrome = new Chrome({
             name: 'foo',
             sandbox: true,
@@ -172,7 +209,7 @@ describe('executeEntryAndGetLifecycle', () => {
         expect(mounts[0]({ name: 'foo' })).toEqual(789);
     });
 
-    it('refer isESM when jsExportType=undefined', async () => {
+    it('refer to isESM when jsExportType=undefined', async () => {
         const chrome = new Chrome({
             name: 'foo',
             sandbox: true,
@@ -295,6 +332,25 @@ describe('load', () => {
         expect(mounts[0]({ name: 'foo' })).toEqual([1, 2]);
     });
 
+    it('has no module/exports/require if not entry when UMD', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            jsExportType: 'umd',
+            presetBodyHTML: '<div id="foo"></foo>',
+        });
+        await chrome
+            .load(null, [
+                new ScriptNode({
+                    content: `window.result = [typeof module, typeof exports, typeof require];`,
+                    entry: false,
+                }),
+            ])
+            .catch(e => e);
+
+        expect(Reflect.get(chrome.window, 'result')).toMatchObject(['undefined', 'undefined', 'undefined']);
+    });
+
     it('timeout works', async () => {
         const chrome = new Chrome({
             name: 'foo',
@@ -395,93 +451,6 @@ describe('launch', () => {
         });
 
         expect(load).toHaveBeenLastCalledWith(null, [], [], []);
-    });
-});
-
-// TODO move ESEngine
-describe('currentScript', () => {
-    it('in sandbox', async () => {
-        const chrome = new Chrome({
-            name: 'foo',
-            sandbox: true,
-        });
-
-        await chrome.launch({
-            styles: [],
-            scripts: [
-                new ScriptNode({
-                    src: `//localhost:10810/chrome/Chrome/currentScript.js?content=${encodeURIComponent(
-                        `window.currentScript = document.currentScript;`
-                    )}`,
-                }),
-                new ScriptNode({
-                    content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return window.currentScript;},unmount(){return document.currentScript;}}`,
-                }),
-            ],
-        });
-
-        const lf = chrome.lifecycleFns;
-
-        const mounts = toArray(lf?.mount ?? []);
-        const updates = toArray(lf?.update);
-        const unmounts = toArray(lf?.unmount ?? []);
-        const currentScript = mounts[0]({ name: 'foo' });
-        expect(currentScript).toBeInstanceOf(HTMLScriptElement);
-        expect(Reflect.get(currentScript, 'tagName')).toBe('SCRIPT');
-        expect(Reflect.get(currentScript, 'nodeName')).toBe('SCRIPT');
-        expect(Reflect.get(currentScript, 'parentElement')).toStrictEqual(chrome.bodyElement);
-        expect(Reflect.get(currentScript, 'parentNode')).toStrictEqual(chrome.bodyElement);
-        expect(Reflect.get(currentScript, 'text')).toContain('const cs = document.currentScript');
-        // document.currentScript is null in callback
-        expect(unmounts[0]({ name: 'foo' })).toBeNull();
-        const up = updates[0];
-        expect(Reflect.get((up && up({ name: 'foo' })) ?? {}, 'src')).toContain('currentScript.js');
-        // not escaped
-        expect(document.currentScript).not.toStrictEqual(currentScript);
-
-        chrome.close();
-    });
-
-    it('in no sandbox', async () => {
-        const chrome = new Chrome({
-            name: 'foo',
-            sandbox: false,
-        });
-
-        await chrome.launch({
-            styles: [],
-            scripts: [
-                new ScriptNode({
-                    src: `//localhost:10810/chrome/Chrome/currentScript.js?content=${encodeURIComponent(
-                        `window.currentScript = document.currentScript;`
-                    )}`,
-                }),
-                new ScriptNode({
-                    content: `const cs = document.currentScript;module.exports={mount(){ return cs;},update(){ return window.currentScript;},unmount(){return document.currentScript;}}`,
-                }),
-            ],
-        });
-
-        const lf = chrome.lifecycleFns;
-
-        const mounts = toArray(lf?.mount ?? []);
-        const updates = toArray(lf?.update);
-        const unmounts = toArray(lf?.unmount ?? []);
-        const currentScript = mounts[0]({ name: 'foo' });
-        expect(currentScript).toBeInstanceOf(HTMLScriptElement);
-        expect(Reflect.get(currentScript, 'tagName')).toBe('SCRIPT');
-        expect(Reflect.get(currentScript, 'nodeName')).toBe('SCRIPT');
-        expect(Reflect.get(currentScript, 'parentElement')).toStrictEqual(chrome.bodyElement);
-        expect(Reflect.get(currentScript, 'parentNode')).toStrictEqual(chrome.bodyElement);
-        expect(Reflect.get(currentScript, 'text')).toContain('const cs = document.currentScript');
-        // document.currentScript is null in callback
-        expect(unmounts[0]({ name: 'foo' })).toBeNull();
-        const up = updates[0];
-        expect(Reflect.get((up && up({ name: 'foo' })) ?? {}, 'src')).toContain('currentScript.js');
-        // not escaped
-        expect(document.currentScript).not.toStrictEqual(currentScript);
-
-        chrome.close();
     });
 });
 

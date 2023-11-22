@@ -16,7 +16,8 @@ function findAvaliableKey(prefix: string): string {
 }
 
 export class ScopedEvaluator extends Debugger {
-    readonly #env: Record<string, unknown>;
+    readonly #baseEnv: Record<string, unknown>;
+    #env: Record<string, unknown>;
     readonly #strict: boolean;
 
     readonly #ENV_KEY: string = findAvaliableKey('__HAPLOID_EVAL_ENV__$');
@@ -24,7 +25,7 @@ export class ScopedEvaluator extends Debugger {
 
     constructor(options: { env?: Record<string, unknown>; useStrict?: boolean; global?: Window }) {
         super();
-        this.#env = options.env ?? {};
+        this.#env = this.#baseEnv = options.env ?? {};
         this.#strict = options.useStrict === undefined || Boolean(options.useStrict);
 
         Reflect.defineProperty(nativeWindow, this.#ENV_KEY, {
@@ -56,13 +57,17 @@ export class ScopedEvaluator extends Debugger {
         return this.#strict;
     }
 
+    public get env(): Record<string, unknown> {
+        return this.#env;
+    }
+
     protected override get debugName(): string {
         return 'chrome:ScopedEvaluator';
     }
 
-    public patchEnv(): string[] {
-        const env = this.#env;
-        const envKeys = Object.keys(env);
+    public patchEnv(env?: Record<string, unknown>): string[] {
+        this.#env = { ...this.#baseEnv, ...env };
+        const envKeys = Object.keys(this.#env);
 
         const envNames = envKeys.filter(name => {
             if (/^[$_a-z][$_a-z0-9]*$/i.test(name)) return true;
@@ -73,8 +78,8 @@ export class ScopedEvaluator extends Debugger {
         return envNames;
     }
 
-    public evaluate(code: string): void {
-        const envNames = this.patchEnv();
+    public evaluate(code: string, env?: Record<string, unknown>): void {
+        const envNames = this.patchEnv(env);
 
         const evalString = `
         ;(function(${envNames.join(', ')}) {

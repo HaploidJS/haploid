@@ -95,6 +95,31 @@ describe('patchEnv()', () => {
         const names = se.patchEnv();
 
         expect(names).toHaveLength(1);
+        expect(se.env).toMatchObject({ NORMAL_KEY: 2 });
+    });
+
+    it('with env parameters', () => {
+        const se = new ScopedEvaluator({
+            env: {
+                __DEV__: 1,
+            },
+        });
+
+        se.patchEnv({ __DEV__: 2 });
+
+        expect(se.env).toMatchObject({ __DEV__: 2 });
+    });
+
+    it('keep base env', async () => {
+        const se = new ScopedEvaluator({
+            env: {
+                __DEV__: 1,
+            },
+        });
+        se.patchEnv({ __DEV__: 2 });
+        se.patchEnv({ __D__: 2 });
+
+        expect(se.env).toMatchObject({ __DEV__: 1, __D__: 2 });
     });
 });
 
@@ -124,6 +149,12 @@ describe('evaluate', () => {
         expect(Reflect.get(window, '__DEV__')).toBe(1);
         env.__DEV__ = 2;
         se.evaluate('window.__DEV__ = __DEV__');
+        expect(Reflect.get(window, '__DEV__')).toBe(2);
+    });
+
+    it('with addtional env', async () => {
+        const se = new ScopedEvaluator({ env: { __DEV__: 1 } });
+        se.evaluate('window.__DEV__ = __DEV__', { __DEV__: 2 });
         expect(Reflect.get(window, '__DEV__')).toBe(2);
     });
 });
