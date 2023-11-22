@@ -1,17 +1,17 @@
 /// <reference types="cypress" />
 
-describe.only('fix-url', () => {
+describe.only('by-api', () => {
     beforeEach(() => {
         cy.visit(`/blackbox-functions/css-fix/index.html`);
-        cy.window().then(win => win.history.pushState(null, '', '#/fix-url'));
+        cy.window().then(win => win.history.pushState(null, '', '#/by-api'));
     });
 
     it(`@charset is removed`, () => {
-        cy.get('#app').find('haploid-head>style').should('not.contain.text', '@charset');
+        cy.get('#app').find('haploid-head>style').should('not.contain.text', '@charset "');
     });
 
     it(`url() is fixed`, () => {
-        cy.get('#app').find('haploid-head>style').should('contain.text', '/apps/new.png');
+        cy.get('#app').find('haploid-head>style').should('contain.text', 'css-fix/apps/new.png');
     });
 
     it(`comment is discarded`, () => {

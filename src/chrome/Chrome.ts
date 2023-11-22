@@ -319,7 +319,8 @@ export class Chrome<T = unknown> extends Debugger {
 
         const text = document.createTextNode(
             `${
-                comment + fixCssUrl(style.content, style.href || style.owner, this.#options.dropURLFixInCSSByStyleSheet)
+                comment +
+                fixCssUrl(style.content, style.href || style.owner, this.#options.dropURLFixInCSSByStyleSheet ?? true)
             }\n`
         );
         styleElement.appendChild(text);
