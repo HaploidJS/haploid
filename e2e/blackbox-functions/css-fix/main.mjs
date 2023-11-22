@@ -7,16 +7,17 @@ const container = new RouterContainer({
 
 container.registerApps([
     {
-        name: 'fix-url',
-        activeWhen: '#/fix-url',
-        entry: './apps/fix-url.html',
+        name: 'by-regexp',
+        activeWhen: '#/by-regexp',
+        entry: './apps/by-regexp.html',
         jsExportType: 'global',
+        // dropURLFixInCSSByStyleSheet: false, default
     },
     {
-        name: 'force-regexp',
-        activeWhen: '#/force-regexp',
-        entry: './apps/force-regexp.html',
-        dropURLFixInCSSByStyleSheet: true,
+        name: 'by-api',
+        activeWhen: '#/by-api',
+        entry: './apps/by-api.html',
+        dropURLFixInCSSByStyleSheet: false,
         jsExportType: 'global',
     },
 ]);

@@ -159,7 +159,7 @@ export interface ChromeOptionsFromSettingOnly {
     fetchResourceOptions?: ResourceFetchingOptions | ((src: string) => ResourceFetchingOptions);
     /** Rewrite asset url. */
     urlRewrite?: (url: string) => string;
-    /** If true, URL is fixed only by regular expression in CSS. */
+    /** If enabled, URL is fixed only by regular expression in CSS, default is true. */
     dropURLFixInCSSByStyleSheet?: boolean;
     /** Explicitly specify js export type. */
     jsExportType?: JSExportType;
