@@ -7,6 +7,6 @@ describe.only('externals', () => {
     });
 
     it(`get markExternal from container`, () => {
-        cy.get('.var-external').should('have.text', 'get external module from var');
+        cy.get('.var-external').should('have.text', 'external:789');
     });
 });

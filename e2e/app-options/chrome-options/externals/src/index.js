@@ -1,7 +1,10 @@
-import mark from 'mark-external';
+import markExternal from 'mark-external';
 
 function mount() {
-    mark();
+    const div = document.createElement('div');
+    div.className = 'var-external';
+    div.append(`external:${markExternal}`);
+    document.body.append(div);
 }
 function unmount() {}
 
