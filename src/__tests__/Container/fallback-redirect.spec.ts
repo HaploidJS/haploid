@@ -1,4 +1,4 @@
-import { RouterContainer, navigateToUrl } from '@/index';
+import { RouterContainer, navigateToUrl } from '../../index';
 import { delay, createRoot, removeRoot } from '../../../spec/test-utils';
 
 describe.only(`fallback-redirect`, () => {

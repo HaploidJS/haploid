@@ -1,4 +1,4 @@
-import { mergeByDescriptor } from '@/utils/mergeByDescriptor';
+import { mergeByDescriptor } from '../../utils/mergeByDescriptor';
 
 describe.only('mergeByDescriptor', () => {
     it("doesn't throw on failure", async () => {

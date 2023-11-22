@@ -1,4 +1,4 @@
-import { DeadLoopDetector } from '@/utils/DeadLoopDetector';
+import { DeadLoopDetector } from '../../utils/DeadLoopDetector';
 
 describe.only(`smells-dead`, () => {
     it(`smells a repeat loop`, async () => {

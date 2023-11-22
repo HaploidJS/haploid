@@ -1,4 +1,4 @@
-import { OneVoteVeto } from '@/utils/OneVoteVeto';
+import { OneVoteVeto } from '../../utils/OneVoteVeto';
 
 import { delay } from '../../../spec/test-utils';
 

@@ -1,5 +1,5 @@
-import { navigateToUrl } from '@/index';
-import { getUniversalRouter, RouterNavigation, RerouteConsumer, RerouteDescriptor } from '@/Router';
+import { navigateToUrl } from '../../index';
+import { getUniversalRouter, RouterNavigation, RerouteConsumer, RerouteDescriptor } from '../../Router';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`happy-consume`, () => {

@@ -1,4 +1,4 @@
-import { PresetDOMParser } from '@/utils/PresetDOMParser';
+import { PresetDOMParser } from '../../utils/PresetDOMParser';
 
 const { parseBodyElement, parseHeadElement } = PresetDOMParser;
 

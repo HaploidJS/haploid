@@ -1,7 +1,7 @@
-import { createSafeModePlugin } from '@/plugins/SafeModePlugin';
-import { baseDebugger } from '@/utils/Debugger';
-import { LifecycleFns } from '@/Def';
-import { App } from '@/App';
+import { createSafeModePlugin } from '../../plugins/SafeModePlugin';
+import { baseDebugger } from '../../utils/Debugger';
+import { LifecycleFns } from '../../Def';
+import { App } from '../../App';
 import { delay } from '../../../spec/test-utils';
 
 function createSafeModeApp<T = Record<never, never>>(...params: ConstructorParameters<typeof App<T>>): App<T> {

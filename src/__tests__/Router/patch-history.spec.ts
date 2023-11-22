@@ -1,4 +1,4 @@
-import { getUniversalRouter } from '@/Router';
+import { getUniversalRouter } from '../../Router';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`patch-history`, () => {

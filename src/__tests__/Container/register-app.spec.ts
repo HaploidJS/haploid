@@ -1,6 +1,6 @@
-import { ManualContainer, RouterContainer, navigateToUrl } from '@/index';
-import { AppLocation } from '@/Def';
-import type { AppPlugin } from '@/Plugin';
+import { ManualContainer, RouterContainer, navigateToUrl } from '../../index';
+import { AppLocation } from '../../Def';
+import type { AppPlugin } from '../../Plugin';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`register-app`, () => {

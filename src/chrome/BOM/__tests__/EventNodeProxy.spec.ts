@@ -1,7 +1,7 @@
-import { EventNodeProxy, EventNodeProxyOptions } from '@/chrome/BOM/EventNodeProxy';
+import { EventNodeProxy, EventNodeProxyOptions } from '../EventNodeProxy';
 
 const windowEventKeys = ((): string[] => {
-    const keys = [];
+    const keys: string[] = [];
     for (const key in window) {
         if ('string' === typeof key && key.startsWith('on')) {
             keys.push(key);

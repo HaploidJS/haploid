@@ -1,6 +1,6 @@
-import { createAttachDOMPlugin } from '@/plugins/AttachDOMPlugin';
-import { App } from '@/App';
-import { baseDebugger } from '@/utils/Debugger';
+import { createAttachDOMPlugin } from '../../plugins/AttachDOMPlugin';
+import { App } from '../../App';
+import { baseDebugger } from '../../utils/Debugger';
 
 describe.only(`AttachDOMPlugin`, () => {
     const debug = baseDebugger.extend('test:AttachDOMPlugin');

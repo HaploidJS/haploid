@@ -1,4 +1,4 @@
-import { AppState } from '@/App';
+import { AppState } from '../../App';
 import { createApp } from './utils';
 
 describe.only(`stop-interrupted`, () => {

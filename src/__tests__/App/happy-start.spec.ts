@@ -1,6 +1,6 @@
 import { delay } from '../../../spec/test-utils';
-import { AppState, App } from '@/App';
-import { LifecycleFns } from '@/Def';
+import { AppState, App } from '../../App';
+import { LifecycleFns } from '../../Def';
 import { createApp } from './utils';
 
 describe.only(`happy-start`, () => {

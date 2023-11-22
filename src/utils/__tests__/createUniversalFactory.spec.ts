@@ -1,4 +1,4 @@
-import { createUniversalFactory } from '@/utils/createUniversalFactory';
+import { createUniversalFactory } from '../../utils/createUniversalFactory';
 
 import { uuid } from '../../../spec/test-utils';
 

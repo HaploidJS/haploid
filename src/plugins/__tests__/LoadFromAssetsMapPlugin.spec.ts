@@ -1,7 +1,7 @@
-import { createLoadFromAssetsMapPlugin } from '@/plugins/LoadFromAssetsMapPlugin';
-import { baseDebugger } from '@/utils/Debugger';
-import { App } from '@/App';
-import { AssetsModule } from '@/index';
+import { createLoadFromAssetsMapPlugin } from '../../plugins/LoadFromAssetsMapPlugin';
+import { baseDebugger } from '../../utils/Debugger';
+import { App } from '../../App';
+import { AssetsModule } from '../../index';
 
 describe.only('LoadFromAssetsMapPlugin', () => {
     const debug = baseDebugger.extend('test:LoadFromAssetsMapPlugin');

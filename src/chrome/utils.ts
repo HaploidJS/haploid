@@ -1,6 +1,6 @@
 import { ElementNode, ScriptNode, StyleNode } from '../node/';
 import { baseDebugger } from '../utils/Debugger';
-import { ResourceFetchingOptions } from '@/Def';
+import { ResourceFetchingOptions } from '../Def';
 
 const debug = baseDebugger.extend('chrome:utils');
 

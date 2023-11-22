@@ -1,4 +1,4 @@
-import { fixCssUrl } from '@/utils/css';
+import { fixCssUrl } from '../../utils/css';
 import { compressCSS } from '../../../spec/test-utils';
 
 const sourceURL = `https://google.com/test/base.css`;

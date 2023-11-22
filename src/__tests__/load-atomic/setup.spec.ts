@@ -1,5 +1,5 @@
-import { setupAppLoadAtomic, getUniversalAppLoadAtomic } from '@/load-atomic';
-import { SingletonAtomic } from '@/Atomic';
+import { setupAppLoadAtomic, getUniversalAppLoadAtomic } from '../../load-atomic';
+import { SingletonAtomic } from '../../Atomic';
 
 describe.only('setup atomic', () => {
     it('setupAppLoadAtomic works before getUniversalAppLoadAtomic', async () => {

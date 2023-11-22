@@ -1,6 +1,6 @@
-import { ManualContainer, RouterContainer, navigateToUrl } from '@/index';
+import { ManualContainer, RouterContainer, navigateToUrl } from '../../index';
 import { delay } from '../../../spec/test-utils';
-import { AppLocation } from '@/Def';
+import { AppLocation } from '../../Def';
 
 describe.only(`activate-app`, () => {
     let container: RouterContainer | ManualContainer;

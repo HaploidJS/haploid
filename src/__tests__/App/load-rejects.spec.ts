@@ -1,4 +1,4 @@
-import { App } from '@/App';
+import { App } from '../../App';
 
 describe.only(`load-rejects`, () => {
     it(`load() rejected when resolveAssets throws`, async () => {

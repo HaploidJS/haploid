@@ -1,4 +1,4 @@
-import { ManualContainer, RouterContainer, navigateToUrl } from '@/index';
+import { ManualContainer, RouterContainer, navigateToUrl } from '../../index';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`emit-event`, () => {

@@ -1,4 +1,4 @@
-import { sanitizeActiveWhen } from '@/utils/sanitizeActiveWhen';
+import { sanitizeActiveWhen } from '../../utils/sanitizeActiveWhen';
 
 describe.only('sanitizeActiveWhen', () => {
     it('pathname activeWhen', async () => {

@@ -1,7 +1,7 @@
-import { createRetryLoadingSourceCodePlugin } from '@/plugins/RetryLoadingSourceCodePlugin';
-import { baseDebugger } from '@/utils/Debugger';
-import { App, AppState } from '@/App';
-import { LifecycleFns } from '@/Def';
+import { createRetryLoadingSourceCodePlugin } from '../../plugins/RetryLoadingSourceCodePlugin';
+import { baseDebugger } from '../../utils/Debugger';
+import { App, AppState } from '../../App';
+import { LifecycleFns } from '../../Def';
 import { delay } from '../../../spec/test-utils';
 
 describe.only(`RetryLoadingSourceCodePlugin`, () => {

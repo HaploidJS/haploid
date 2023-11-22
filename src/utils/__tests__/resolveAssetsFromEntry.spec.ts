@@ -1,4 +1,4 @@
-import { resolveAssetsFromEntry } from '@/utils/resolveAssetsFromEntry';
+import { resolveAssetsFromEntry } from '../../utils/resolveAssetsFromEntry';
 
 describe('resolveAssetsFromEntry by ways', () => {
     it('resolved a non-ESM entry by extension=.js', async () => {

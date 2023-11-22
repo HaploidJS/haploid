@@ -1,4 +1,4 @@
-import { WindowNode } from '@/chrome/BOM/Window';
+import { WindowNode } from '../Window';
 import { delay } from '../../../../spec/test-utils';
 
 describe.only('Window', () => {

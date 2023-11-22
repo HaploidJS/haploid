@@ -1,4 +1,4 @@
-import { ManualContainer } from '@/index';
+import { ManualContainer } from '../../index';
 
 describe.only(`happy-dev`, () => {
     const devTool = window.__HAPLOID_DEV_TOOL__;

@@ -1,4 +1,4 @@
-import { getUniversalGlobalExportResolver } from '@/GlobalExportResolver';
+import { getUniversalGlobalExportResolver } from '../../GlobalExportResolver';
 
 describe.only('instance', () => {
     it(`toString() is "[object GlobalExportResolver]"`, async () => {

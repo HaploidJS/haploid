@@ -1,4 +1,4 @@
-import { MinesweeperQueue } from '@/MinesweeperQueue';
+import { MinesweeperQueue } from '../../MinesweeperQueue';
 
 const minesweeperQueue = new MinesweeperQueue([{ isCanceled: false }]);
 

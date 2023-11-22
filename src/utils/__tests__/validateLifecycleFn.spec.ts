@@ -1,4 +1,4 @@
-import { validateLifecycleFn } from '@/utils/validateLifecycleFn';
+import { validateLifecycleFn } from '../../utils/validateLifecycleFn';
 
 describe.only('validateLifecycleFn', () => {
     describe('bootstrap', () => {

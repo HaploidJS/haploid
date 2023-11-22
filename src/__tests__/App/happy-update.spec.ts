@@ -1,7 +1,7 @@
 import { delay } from '../../../spec/test-utils';
-import { AppState, App } from '@/App';
+import { AppState, App } from '../../App';
 import { createApp } from './utils';
-import { LifecycleFns } from '@/Def';
+import { LifecycleFns } from '../../Def';
 
 const UPDATE_REJECT_ERROR = /cannot update/;
 

@@ -2,5 +2,6 @@
     "extends": "./tsconfig.common.json",
     "include": [
         "src/**/*.ts"
-    ]
+    ],
+    "exclude": ["src/**/__tests__/**/*.ts",]
 }

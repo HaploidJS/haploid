@@ -1,4 +1,4 @@
-import { getUniversalGlobalExportResolver } from '@/GlobalExportResolver';
+import { getUniversalGlobalExportResolver } from '../../GlobalExportResolver';
 import { uuid } from '../../../spec/test-utils';
 
 describe.only('resolve', () => {

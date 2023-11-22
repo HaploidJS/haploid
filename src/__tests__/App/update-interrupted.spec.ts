@@ -1,5 +1,5 @@
 import { createApp } from './utils';
-import { AppState } from '@/App';
+import { AppState } from '../../App';
 
 describe.only(`update-interrupted`, () => {
     it(`update() interrupted by stop() before updating`, async () => {

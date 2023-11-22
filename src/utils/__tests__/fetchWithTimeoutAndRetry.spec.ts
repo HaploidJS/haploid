@@ -1,4 +1,4 @@
-import { fetchWithTimeoutAndRetry } from '@/utils/fetchWithTimeoutAndRetry';
+import { fetchWithTimeoutAndRetry } from '../../utils/fetchWithTimeoutAndRetry';
 
 describe.only('fetchWithTimeoutAndRetry', () => {
     it('success after retry times', async () => {

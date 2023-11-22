@@ -1,6 +1,6 @@
-import { createIgnoreUnmountFailurePlugin } from '@/plugins/IgnoreUnmountFailurePlugin';
-import { baseDebugger } from '@/utils/Debugger';
-import { App } from '@/App';
+import { createIgnoreUnmountFailurePlugin } from '../../plugins/IgnoreUnmountFailurePlugin';
+import { baseDebugger } from '../../utils/Debugger';
+import { App } from '../../App';
 
 describe.only(`IgnoreUnmountFailurePlugin`, () => {
     it(`unmount error ignored`, async () => {

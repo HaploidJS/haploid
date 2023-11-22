@@ -1,4 +1,4 @@
-import { filterDOM } from '@/utils/filterDOM';
+import { filterDOM } from '../../utils/filterDOM';
 
 describe.only('filterDOM', () => {
     beforeEach(() => {

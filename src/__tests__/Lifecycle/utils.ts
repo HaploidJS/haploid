@@ -1,5 +1,5 @@
-import type { LifecycleFns, LifecycleOptions } from '@/Def';
-import { Lifecycle } from '@/Lifecycle';
+import type { LifecycleFns, LifecycleOptions } from '../../Def';
+import { Lifecycle } from '../../Lifecycle';
 
 export function createLifecycle<T = unknown>(
     fns?: Partial<LifecycleFns<T>>,

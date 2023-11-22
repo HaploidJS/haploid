@@ -1,4 +1,4 @@
-import { patchEventListener } from '@/chrome/BOM/patchEventListener';
+import { patchEventListener } from '../patchEventListener';
 
 describe.only('patchEventListener', () => {
     it('addEventListener/removeEventListener work', () => {

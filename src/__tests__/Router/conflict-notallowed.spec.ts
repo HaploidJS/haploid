@@ -1,5 +1,5 @@
-import { getUniversalRouter } from '@/Router';
-import { __HAPLOID_ROUTER__ } from '@/constant';
+import { getUniversalRouter } from '../../Router';
+import { __HAPLOID_ROUTER__ } from '../../constant';
 
 describe.only(`allow-conflict`, () => {
     it(`allow conflict with global.value`, () => {
