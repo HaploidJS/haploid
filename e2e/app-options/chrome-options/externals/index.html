@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <title>CommonJS Usage</title>
+        <title>Externals</title>
         <style>
             html, body {
                 padding: 0;
@@ -24,12 +24,7 @@
                     activeWhen: '#/var',
                     entry: './dist/main.js',
                     externals: {
-                        markExternal: function(){
-                            const div = document.createElement('div');
-                            div.className = 'var-external';
-                            div.textContent = 'get external module from var';
-                            document.body.append(div);
-                        },
+                        markExternal: 789,
                     }
                 },
             ]);

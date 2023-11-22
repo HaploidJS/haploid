@@ -5,7 +5,7 @@
   "workspaces": [
     "e2e/sdk-references/cjs-usage",
     "e2e/sdk-references/systemjs-usage",
-    "e2e/additional-usage/with-external"
+    "e2e/app-options/chrome-options/externals"
   ],
   "main": "dist/haploid.cjs.min.js",
   "module": "dist/haploid.esm.min.js",
@@ -26,7 +26,7 @@
     "build": "rollup -c rollup.config.mjs",
     "clean": "rm -rf dist types",
     "lint": "prettier \"{src,mocks,spec}/**/*.{ts,css,js,html}\" --write && eslint \"{src,spec}/**/*.{ts,js}\" --fix",
-    "boostrap": "npm i -ws --include-workspace-root",
+    "bootstrap": "npm i -ws --include-workspace-root",
     "test": "npm run build",
     "test:unit": "node scripts/run-unit.mjs",
     "test:e2e": "npm run build:e2e && node scripts/run-e2e.mjs",
