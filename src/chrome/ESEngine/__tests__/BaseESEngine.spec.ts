@@ -1,6 +1,6 @@
-import { ScriptNode } from '@/node';
+import { ScriptNode } from '../../../node';
 import { BaseESEngine } from '../BaseESEngine';
-import { WindowNode } from '../../BOM/';
+import { WindowNode, RawWindowNode } from '../../BOM/';
 
 class TestESEngine extends BaseESEngine {
     protected override execNonESMScript(script: ScriptNode): void {
@@ -15,24 +15,6 @@ class TestESEngine extends BaseESEngine {
 describe('exec script', () => {
     beforeEach(() => {
         jest.resetModules();
-    });
-
-    it('onBefore/onAfter', () => {
-        const engine = new TestESEngine(new WindowNode('test', {}));
-
-        const before = jest.fn();
-        const after = jest.fn();
-
-        engine.execScript(
-            new ScriptNode({
-                content: '',
-            }),
-            before,
-            after
-        );
-
-        expect(before).toHaveBeenCalled();
-        expect(after).toHaveBeenCalled();
     });
 
     it('non-ESM', () => {
@@ -61,4 +43,52 @@ describe('exec script', () => {
     });
 
     it.todo('ESM code');
+});
+
+describe('currentScript', () => {
+    it('with WindowNode', async () => {
+        const win = new WindowNode('test', {});
+        const engine = new TestESEngine(win);
+
+        const ele = win.node.document.createElement('script');
+
+        engine.execScript(
+            new ScriptNode({
+                content: `
+            window.currentScript = document.currentScript;
+            window.getCurrentScript = () => document.currentScript;
+           `,
+            }),
+            {
+                scriptElement: ele,
+            }
+        );
+
+        expect(Reflect.get(win.node, 'currentScript')).toStrictEqual(ele);
+        expect(Reflect.get(win.node, 'getCurrentScript')()).toBeNull();
+        expect(Reflect.get(win.node.document, 'currentScript')).toBeNull();
+    });
+
+    it('with RawWindowNode', async () => {
+        const win = new RawWindowNode({});
+        const engine = new TestESEngine(win);
+
+        const ele = win.node.document.createElement('script');
+
+        engine.execScript(
+            new ScriptNode({
+                content: `
+            window.currentScript = document.currentScript;
+            window.getCurrentScript = () => document.currentScript;
+           `,
+            }),
+            {
+                scriptElement: ele,
+            }
+        );
+
+        expect(Reflect.get(win.node, 'currentScript')).toStrictEqual(ele);
+        expect(Reflect.get(win.node, 'getCurrentScript')()).toBeNull();
+        expect(Reflect.get(win.node.document, 'currentScript')).toBeNull();
+    });
 });

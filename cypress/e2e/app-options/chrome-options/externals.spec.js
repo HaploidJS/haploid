@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
-describe.only('with-external', () => {
+describe.only('externals', () => {
     beforeEach(() => {
-        cy.visit(`/additional-usage/with-external/index.html`);
+        cy.visit(`/app-options/chrome-options/externals/index.html`);
         cy.window().then(win => win.history.pushState(null, '', '#/var'));
     });
 

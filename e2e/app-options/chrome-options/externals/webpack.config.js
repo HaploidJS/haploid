@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
     entry: './src/index.js',
     output: {
+        clean: true,
         library: {
             name: 'var-external',
             type: 'umd',
@@ -14,7 +15,7 @@ module.exports = {
     optimization: {
         minimize: false,
     },
-    externalsType: 'var',
+    externalsType: 'commonjs',
     externals: {
         'mark-external': 'markExternal',
     },

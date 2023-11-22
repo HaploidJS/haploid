@@ -15,6 +15,23 @@ describe('define env in global/window and remove later', () => {
         expect(Reflect.get(window, '__RESULT__')).toBe(1);
     });
 
+    it('read env from window with ebv', async () => {
+        const engine = createESEngine(false, new RawWindowNode({}));
+
+        engine.execScript(
+            new ScriptNode({
+                content: `window.__RESULT__ = window.__DEV__`,
+            }),
+            {
+                env: {
+                    __DEV__: 1,
+                },
+            }
+        );
+
+        expect(Reflect.get(window, '__RESULT__')).toBe(1);
+    });
+
     it('read env from globalThis', async () => {
         const engine = createESEngine(false, new RawWindowNode({ __DEV__: 1 }));
 

@@ -1,6 +1,6 @@
-import { createESEngine } from '../';
-import { WindowNode } from '../../BOM/';
-import { ScriptNode } from '../../../node/';
+import { createESEngine } from '..';
+import { WindowNode } from '../../BOM';
+import { ScriptNode } from '../../../node';
 
 describe('resolve env from proxy', () => {
     it('env do not leak', async () => {

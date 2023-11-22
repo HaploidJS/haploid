@@ -1,5 +1,5 @@
 {
-  "name": "with-external",
+  "name": "e2e-externals",
   "version": "1.0.0",
   "private": true,
   "scripts": {
