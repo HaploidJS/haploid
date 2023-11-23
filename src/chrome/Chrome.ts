@@ -151,7 +151,7 @@ export class Chrome<T = unknown> extends Debugger {
      * @returns
      */
     public async launch(content: ChromeContent): Promise<void> {
-        this.debug('Call open(%O).', content);
+        this.debug('Call launch(%O).', content);
 
         if (this.#isClosed) {
             return Promise.reject(Error('This chrome has been closed.'));
@@ -174,6 +174,13 @@ export class Chrome<T = unknown> extends Debugger {
         nonDepScripts: ScriptNode[] = [],
         styles: StyleNode[] = []
     ): Promise<void> {
+        this.debug(
+            'Call load(entry=%o, depScripts=%o, nonDepScripts=%o, styles=%o).',
+            entry,
+            depScripts,
+            nonDepScripts,
+            styles
+        );
         // ⬇️ Downloading styles should block process.
         await Promise.all(
             styles.map(s => s.downloadContent(createFetchResourceOptions(s.href, this.#options.fetchResourceOptions)))
@@ -183,7 +190,7 @@ export class Chrome<T = unknown> extends Debugger {
 
         this.#createStyleElements(styles);
 
-        this.debug('Download and evaluate dependency scripts: %O.', depScripts.join('\n'));
+        if (this.debug.enabled) this.debug('Download and evaluate dependency scripts: %O.', depScripts.join('\n'));
 
         let indexWaitToExecute = 0;
 
@@ -217,7 +224,7 @@ export class Chrome<T = unknown> extends Debugger {
                 return;
             }
 
-            this.debug('Evaluate non-dependency scripts:\n%s.', nonDepScripts.join('\n'));
+            if (this.debug.enabled) this.debug('Evaluate non-dependency scripts:\n%s.', nonDepScripts.join('\n'));
 
             // ⬇️ Download non-dependency scripts.
             await Promise.all(
@@ -236,7 +243,7 @@ export class Chrome<T = unknown> extends Debugger {
     public executeEntryAndGetLifecycle<T>(entry: ScriptNode): Promise<LifecycleFns<T> | undefined> {
         const jsType = this.#options.jsExportType;
 
-        this.debug('Evaluate entry script %s by type %s.', entry, jsType);
+        this.debug('Call executeEntryAndGetLifecycle(%s) by type %s.', entry, jsType);
 
         switch (jsType) {
             case undefined:
@@ -260,6 +267,7 @@ export class Chrome<T = unknown> extends Debugger {
     }
 
     #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+        this.debug('Call #executeEntryAndGetLifecycleByGlobal(%o).', entry);
         const entryKey = getUniversalGlobalExportResolver().resolve(
             () => this.#execScriptNode(entry),
             entry.src || entry.content,
@@ -270,6 +278,7 @@ export class Chrome<T = unknown> extends Debugger {
     }
 
     #executeEntryAndGetLifecycleByUMD<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+        this.debug('Call #executeEntryAndGetLifecycleByUMD(%s).', entry);
         const originalExports = {};
         const exports = originalExports;
         const module = { exports };
@@ -287,6 +296,7 @@ export class Chrome<T = unknown> extends Debugger {
 
         if (module.exports !== originalExports) {
             // exports has been set!
+            this.debug('Find module.exports=%o.', module.exports);
             return Promise.resolve(module.exports as LifecycleFns<T>);
         }
 
@@ -294,6 +304,7 @@ export class Chrome<T = unknown> extends Debugger {
     }
 
     async #executeEntryAndGetLifecycleByESM<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+        this.debug('Call #executeEntryAndGetLifecycleByESM(%s).', entry);
         const exported = await this.#execScriptNode<
             LifecycleFns<T> | { __HAPLOID_LIFECYCLE_EXPORT__: Promise<LifecycleFns<T>> }
         >(entry);
