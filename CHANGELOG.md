@@ -1,3 +1,9 @@
+# [2.0.0-next.20231123.10](https://github.com/HaploidJS/haploid/compare/v2.0.0-next.20231122.21...v2.0.0-next.20231123.10) (2023-11-23)
+
+### Bug Fixes
+
+-   set executing context to window always ([c955cf7](https://github.com/HaploidJS/haploid/commit/c955cf75714237da4b5ef1f7d151426acc89d3ee))
+
 # [2.0.0-next.20231122.21](https://github.com/HaploidJS/haploid/compare/v1.2.0...v2.0.0-next.20231122.21) (2023-11-22)
 
 ### Features
