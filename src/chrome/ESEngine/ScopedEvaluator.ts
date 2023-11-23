@@ -82,12 +82,10 @@ export class ScopedEvaluator extends Debugger {
         const envNames = this.patchEnv(env);
 
         const evalString = `
-        ;(function(${envNames.join(', ')}) {
-            ${this.#strict ? '"use strict";' : ''}
-           ${code}
-        }).call(${this.#strict ? 'undefined' : `window.${this.#CTX_KEY}`}, ${envNames
-            .map(key => `window.${this.#ENV_KEY}.${key}`)
-            .join(', ')})`;
+;(function(${envNames.join(', ')}) {
+    ${this.#strict ? '"use strict";' : ''}
+    ${code}
+}).call(window.${this.#CTX_KEY}, ${envNames.map(key => `window.${this.#ENV_KEY}.${key}`).join(', ')})`;
 
         this.debug('evalString=%s.', evalString);
 

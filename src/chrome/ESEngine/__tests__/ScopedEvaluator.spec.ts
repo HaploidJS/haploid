@@ -130,10 +130,10 @@ describe('evaluate', () => {
         expect(Reflect.get(window, '__DEV__')).toBe(2);
     });
 
-    it('this is undefined if strict', () => {
+    it('this is window if strict', () => {
         const se = new ScopedEvaluator({ useStrict: true, global: window });
         se.evaluate('window.__SELF__ = this');
-        expect(Reflect.get(window, '__SELF__')).toBeUndefined();
+        expect(Reflect.get(window, '__SELF__')).toStrictEqual(window);
     });
 
     it('this is window if non-strict', () => {
