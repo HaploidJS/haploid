@@ -1,5 +1,5 @@
-import { AssetsMap, fillAssetsMap, FullAssetsMap, AssetsModule } from '../AssetsMap';
-import type { AppEntry } from '../Def';
+import { AssetsMap, fillAssetsMap, FullAssetsMap } from '../AssetsMap';
+import type { AppEntry, JSExportType } from '../Def';
 import { baseDebugger as debug } from './Debugger';
 import { ScriptNode, StyleNode } from '../node/';
 
@@ -21,6 +21,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
     bodyHTML?: string;
     title?: string;
     lastModified?: string;
+    jsExportType?: JSExportType;
 }> {
     debug('Call resolveAssetsFromEntry(%O).', entry);
 
@@ -86,7 +87,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
         case contentType.includes('application/json'): {
             const exports = (await entryResponse.json()) as
                 | Versionable<AssetsMap, 1>
-                | Versionable<{ css: string[]; js: string[]; module?: AssetsModule }, 2>;
+                | Versionable<{ css: string[]; js: string[]; module?: JSExportType }, 2>;
 
             debug('Detected a JSON entry %s: %O.', entry, exports);
 
@@ -94,7 +95,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
 
             if (exports.version === 2) {
                 fullAssetsMap = fillAssetsMap({
-                    module: exports.module || AssetsModule.UMD,
+                    module: exports.module || 'umd',
                     initial: {
                         css: exports.css,
                         js: exports.js,
@@ -109,11 +110,12 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
                 });
             }
 
-            const isModule = fullAssetsMap.module === AssetsModule.ESM ? 'module' : undefined;
+            const isModule = fullAssetsMap.module === 'esm' || fullAssetsMap.module === 'module' ? 'module' : undefined;
 
             return {
                 isJSON: true,
                 lastModified,
+                jsExportType: fullAssetsMap.module,
                 styles: fullAssetsMap.initial.css.map(css => new StyleNode({ href: toAbsolutePath(css, entryHref) })),
                 scripts: (isModule ? fullAssetsMap.initial.js.slice(-1) : fullAssetsMap.initial.js).map(
                     js =>

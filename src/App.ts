@@ -401,6 +401,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
                     title,
                     presetHeadHTML,
                     presetBodyHTML,
+                    jsExportType: assets?.jsExportType,
 
                     ...this.options,
 

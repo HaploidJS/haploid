@@ -109,6 +109,21 @@ describe('constructor', () => {
 });
 
 describe('executeEntryAndGetLifecycle', () => {
+    it('throws if jsExportType=unknown', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            // @ts-ignore test
+            jsExportType: 'unknown',
+        });
+        await expect(
+            chrome.executeEntryAndGetLifecycle(
+                new ScriptNode({
+                    content: `xxx`,
+                })
+            )
+        ).rejects.toThrow(/Unknown jsExportType/);
+    });
     it('jsExportType=global', async () => {
         const chrome = new Chrome({
             name: 'foo',

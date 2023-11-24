@@ -161,8 +161,6 @@ export interface ChromeOptionsFromSettingOnly {
     urlRewrite?: (url: string) => string;
     /** If enabled, URL is fixed only by regular expression in CSS, default is true. */
     dropURLFixInCSSByStyleSheet?: boolean;
-    /** Explicitly specify js export type. */
-    jsExportType?: JSExportType;
     /** Require external modules. */
     externals?: Record<string, unknown>;
 }
@@ -174,6 +172,8 @@ export interface ChromeOptionsFromResolvingOrSetting {
     presetBodyHTML?: string;
     /** Text string in &lt;haploid-title&gt;. */
     title?: string;
+    /** Explicitly specify js export type. */
+    jsExportType?: JSExportType;
 }
 
 export interface OptionsFromResolving

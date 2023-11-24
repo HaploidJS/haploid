@@ -45,18 +45,19 @@ describe('resolveAssetsFromEntry by ways', () => {
     });
 
     it('resolved a JSON entry(version1) by extension=.json', async () => {
-        const { isJSON, scripts, styles } = await resolveAssetsFromEntry({
+        const { isJSON, scripts, styles, jsExportType } = await resolveAssetsFromEntry({
             url: '//localhost:10810/resolveAssetsFromEntry/entry-version1.json',
         });
         expect(isJSON).toBe(true);
         expect(styles).toHaveLength(1);
         expect(scripts).toHaveLength(1);
+        expect(jsExportType).toBe('umd'); // default
         expect(styles[0].href).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.css`);
         expect(scripts[0].src).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.js`);
     });
 
     it('resolved a JSON entry(version2) by extension=.json', async () => {
-        const { isJSON, scripts, styles } = await resolveAssetsFromEntry({
+        const { isJSON, scripts, styles, jsExportType } = await resolveAssetsFromEntry({
             url: '//localhost:10810/resolveAssetsFromEntry/entry-version2.json',
         });
         expect(isJSON).toBe(true);
@@ -64,6 +65,46 @@ describe('resolveAssetsFromEntry by ways', () => {
         expect(scripts).toHaveLength(1);
         expect(styles[0].href).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.css`);
         expect(scripts[0].isESM).toBe(true);
+        expect(jsExportType).toBe('esm');
+        expect(scripts[0].src).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.js`);
+    });
+
+    it('resolved a JSON entry by extension=.json with module=module', async () => {
+        const { isJSON, scripts, styles, jsExportType } = await resolveAssetsFromEntry({
+            url: '//localhost:10810/resolveAssetsFromEntry/entry-module.json',
+        });
+        expect(isJSON).toBe(true);
+        expect(styles).toHaveLength(1);
+        expect(scripts).toHaveLength(1);
+        expect(styles[0].href).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.css`);
+        expect(scripts[0].isESM).toBe(true);
+        expect(jsExportType).toBe('module');
+        expect(scripts[0].src).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.js`);
+    });
+
+    it('resolved a JSON entry by extension=.json with module=esm', async () => {
+        const { isJSON, scripts, styles, jsExportType } = await resolveAssetsFromEntry({
+            url: '//localhost:10810/resolveAssetsFromEntry/entry-esm.json',
+        });
+        expect(isJSON).toBe(true);
+        expect(styles).toHaveLength(1);
+        expect(scripts).toHaveLength(1);
+        expect(styles[0].href).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.css`);
+        expect(scripts[0].isESM).toBe(true);
+        expect(jsExportType).toBe('esm');
+        expect(scripts[0].src).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.js`);
+    });
+
+    it('resolved a JSON entry by extension=.json with module=global', async () => {
+        const { isJSON, scripts, styles, jsExportType } = await resolveAssetsFromEntry({
+            url: '//localhost:10810/resolveAssetsFromEntry/entry-global.json',
+        });
+        expect(isJSON).toBe(true);
+        expect(styles).toHaveLength(1);
+        expect(scripts).toHaveLength(1);
+        expect(styles[0].href).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.css`);
+        expect(scripts[0].isESM).toBe(false);
+        expect(jsExportType).toBe('global');
         expect(scripts[0].src).toBe(`http://localhost:10810/resolveAssetsFromEntry/initial.js`);
     });
 

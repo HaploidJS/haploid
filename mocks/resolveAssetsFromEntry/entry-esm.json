@@ -1,0 +1,6 @@
+{
+    "version": 2,
+    "module": "esm",
+    "css": ["initial.css"],
+    "js": ["initial.js"]
+}
