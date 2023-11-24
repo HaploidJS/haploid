@@ -1,7 +1,4 @@
-export enum AssetsModule {
-    UMD = 'umd',
-    ESM = 'esm',
-}
+import type { JSExportType } from './Def';
 
 interface Resource {
     css?: string[];
@@ -11,18 +8,18 @@ interface Resource {
 export type AssetsMap = {
     initial?: Resource;
     async?: Resource;
-    module?: AssetsModule;
+    module?: JSExportType;
 };
 
 export type FullAssetsMap = {
     initial: Required<Resource>;
     async: Required<Resource>;
-    module: AssetsModule;
+    module: JSExportType;
 };
 
 export function fillAssetsMap(am: AssetsMap): FullAssetsMap {
     const fam: FullAssetsMap = {
-        module: AssetsModule.UMD,
+        module: 'umd',
         initial: {
             css: [],
             js: [],
@@ -33,14 +30,7 @@ export function fillAssetsMap(am: AssetsMap): FullAssetsMap {
         },
     };
 
-    if (am.module) {
-        if (am.module !== AssetsModule.UMD && am.module !== AssetsModule.ESM) {
-            throw Error(`The module of AssetsMap can be only ${AssetsModule.UMD} or ${AssetsModule.ESM}.`);
-        }
-        fam.module = am.module;
-    } else {
-        fam.module = AssetsModule.UMD;
-    }
+    fam.module = am.module || 'umd';
 
     const keys: Array<'initial' | 'async'> = ['initial', 'async'];
 

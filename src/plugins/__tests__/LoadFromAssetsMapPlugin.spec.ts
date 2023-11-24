@@ -1,12 +1,12 @@
 import { createLoadFromAssetsMapPlugin } from '../../plugins/LoadFromAssetsMapPlugin';
 import { baseDebugger } from '../../utils/Debugger';
 import { App } from '../../App';
-import { AssetsModule } from '../../index';
+
+const debug = baseDebugger.extend('test:LoadFromAssetsMapPlugin');
 
 describe.only('LoadFromAssetsMapPlugin', () => {
-    const debug = baseDebugger.extend('test:LoadFromAssetsMapPlugin');
-    it('load lifecycleFns from assetsMap', async () => {
-        const jsUrl = `http://localhost:10810/createLoadFromAssetsMapPlugin/assetsMap?headers=${encodeURIComponent(
+    it('load lifecycleFns from assetsMap with module=global', async () => {
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js?headers=${encodeURIComponent(
             JSON.stringify({
                 'Content-Type': `text/javascript;charset=utf-8`,
             })
@@ -17,12 +17,110 @@ describe.only('LoadFromAssetsMapPlugin', () => {
         const app = new App<unknown, unknown>({
             name: 'foo',
             assetsMap: {
-                module: AssetsModule.UMD,
+                module: 'global',
                 initial: {
                     js: [jsUrl],
                 },
             },
-            jsExportType: 'global',
+        });
+
+        createLoadFromAssetsMapPlugin()({
+            app: app.api,
+            debug,
+        });
+
+        await expect(app.load()).resolves.toBeDefined();
+        expect(app.lifecycle.fns.raw).toBeDefined();
+    });
+
+    it('load lifecycleFns from assetsMap with module=umd', async () => {
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js?headers=${encodeURIComponent(
+            JSON.stringify({
+                'Content-Type': `text/javascript;charset=utf-8`,
+            })
+        )}&content=${encodeURIComponent(`
+                module.exports = { mount(){}, unmount(){} };
+            `)}`;
+
+        const app = new App<unknown, unknown>({
+            name: 'foo',
+            assetsMap: {
+                module: 'umd',
+                initial: {
+                    js: [jsUrl],
+                },
+            },
+        });
+
+        createLoadFromAssetsMapPlugin()({
+            app: app.api,
+            debug,
+        });
+
+        await expect(app.load()).resolves.toBeDefined();
+        expect(app.lifecycle.fns.raw).toBeDefined();
+    });
+
+    it('load lifecycleFns from assetsMap with module=undefined', async () => {
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js?headers=${encodeURIComponent(
+            JSON.stringify({
+                'Content-Type': `text/javascript;charset=utf-8`,
+            })
+        )}&content=${encodeURIComponent(`
+                module.exports = { mount(){}, unmount(){} };
+            `)}`;
+
+        const app = new App<unknown, unknown>({
+            name: 'foo',
+            assetsMap: {
+                initial: {
+                    js: [jsUrl],
+                },
+            },
+        });
+
+        createLoadFromAssetsMapPlugin()({
+            app: app.api,
+            debug,
+        });
+
+        await expect(app.load()).resolves.toBeDefined();
+        expect(app.lifecycle.fns.raw).toBeDefined();
+    });
+
+    it('load lifecycleFns from assetsMap with module=module', async () => {
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js`;
+
+        const app = new App<unknown, unknown>({
+            name: 'foo',
+            assetsMap: {
+                module: 'module',
+                initial: {
+                    js: [jsUrl],
+                },
+            },
+        });
+
+        createLoadFromAssetsMapPlugin()({
+            app: app.api,
+            debug,
+        });
+
+        await expect(app.load()).resolves.toBeDefined();
+        expect(app.lifecycle.fns.raw).toBeDefined();
+    });
+
+    it('load lifecycleFns from assetsMap with module=esm', async () => {
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js`;
+
+        const app = new App<unknown, unknown>({
+            name: 'foo',
+            assetsMap: {
+                module: 'esm',
+                initial: {
+                    js: [jsUrl],
+                },
+            },
         });
 
         createLoadFromAssetsMapPlugin()({
@@ -35,23 +133,21 @@ describe.only('LoadFromAssetsMapPlugin', () => {
     });
 
     it('ignoreAsset works', async () => {
-        const jsUrl = `http://localhost:10810/createLoadFromAssetsMapPlugin/assetsMap?headers=${encodeURIComponent(
+        const jsUrl = `http://localhost:10810/resolveAssetsFromEntry/assetsMap.js?headers=${encodeURIComponent(
             JSON.stringify({
                 'Content-Type': `text/javascript;charset=utf-8`,
             })
         )}&content=${encodeURIComponent(`
-                globalThis[Date.now()] = { mount(){}, unmount(){} };
+                module.exports = { mount(){}, unmount(){} };
             `)}`;
 
         const app = new App<unknown, unknown>({
             name: 'foo',
             assetsMap: {
-                module: AssetsModule.UMD,
                 initial: {
                     js: [jsUrl],
                 },
             },
-            jsExportType: 'global',
             ignoreAsset: (src: string): boolean => /404/.test(src),
         });
 

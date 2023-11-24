@@ -2,9 +2,10 @@ import { Transformable, normalizeTransformable } from '../utils/Transformable';
 import { parseIgnoreAsset } from '../utils/parseIgnoreAsset';
 import { toAbsolutePath } from '../utils/url';
 
-import { AssetsMap, fillAssetsMap, AssetsModule } from '../AssetsMap';
+import { AssetsMap, fillAssetsMap } from '../AssetsMap';
 import { ScriptNode, StyleNode } from '../node/';
 import type { AppPlugin } from '../Plugin';
+import type { JSExportType } from '../Def';
 
 declare module '../Def' {
     interface AppPluginOptions {
@@ -31,7 +32,11 @@ export function createLoadFromAssetsMapPlugin<AdditionalOptions, CustomProps>():
 
         debug('From assetsMap: %O.', options.assetsMap);
 
-        async function loadFromAssetsMap(): Promise<{ scripts: ScriptNode[]; styles: StyleNode[] }> {
+        async function loadFromAssetsMap(): Promise<{
+            scripts: ScriptNode[];
+            styles: StyleNode[];
+            jsExportType?: JSExportType;
+        }> {
             if (!options.assetsMap) {
                 throw Error(`"assetsMap" cannot be ${String(options.assetsMap)}.`);
             }
@@ -46,7 +51,7 @@ export function createLoadFromAssetsMapPlugin<AdditionalOptions, CustomProps>():
 
             const styles: StyleNode[] = cssAssets.map(css => new StyleNode({ href: css }));
 
-            if (fullAssetsMap.module === AssetsModule.ESM) {
+            if (fullAssetsMap.module === 'esm' || fullAssetsMap.module === 'module') {
                 // Keep the last one in ESM mode.
                 scripts.push(new ScriptNode({ src: toAbsolutePath(jsAssets.pop()), type: 'module' }));
             } else {
@@ -57,6 +62,7 @@ export function createLoadFromAssetsMapPlugin<AdditionalOptions, CustomProps>():
             }
 
             return {
+                jsExportType: fullAssetsMap.module,
                 scripts: scripts.filter(s => (s.src ? !ignoreAsset(s.src) : true)),
                 styles: styles.filter(s => (s.href ? !ignoreAsset(s.href) : true)),
             };

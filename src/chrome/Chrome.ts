@@ -262,8 +262,7 @@ export class Chrome<T = unknown> extends Debugger {
                 return this.#executeEntryAndGetLifecycleByGlobal(entry);
             default:
         }
-
-        return Promise.resolve(undefined);
+        return Promise.reject(Error(`Unknown jsExportType ${jsType}.`));
     }
 
     #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {

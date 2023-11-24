@@ -36,7 +36,7 @@ export type { CancelationRouterNavigation, RouterAppOptions } from './RouterCont
 export { navigateToUrl } from './utils/navigateToUrl';
 export { type Transformable, normalizeTransformable } from './utils/Transformable';
 export type { AppPlugin } from './Plugin';
-export { AssetsModule, AssetsMap, FullAssetsMap } from './AssetsMap';
+export { AssetsMap, FullAssetsMap } from './AssetsMap';
 export { getUniversalDevTool, DevTool } from './DevTool';
 export { Atomic, getUniversalAtomic } from './Atomic';
 export { getUniversalRouter, Router } from './Router';
