@@ -27,6 +27,12 @@ container.registerApps([
         entry: './entry-js-umd/entry.js',
     },
     {
+        name: 'entry-js-global',
+        activeWhen: '#/entry-js-global',
+        entry: './entry-js-global/entry.js',
+        jsExportType: 'global',
+    },
+    {
         name: 'entry-json',
         activeWhen: '#/entry-json',
         entry: './entry-json/entry.json',
@@ -39,6 +45,28 @@ container.registerApps([
             version: 1,
             initial: {
                 js: ['./entry-js-esm/entry.mjs'],
+            },
+        },
+    },
+    {
+        name: 'entry-assetmap-module',
+        activeWhen: '#/entry-assetmap-module',
+        assetsMap: {
+            module: 'module',
+            version: 1,
+            initial: {
+                js: ['./entry-js-esm/entry.mjs'],
+            },
+        },
+    },
+    {
+        name: 'entry-assetmap-global',
+        activeWhen: '#/entry-assetmap-global',
+        assetsMap: {
+            module: 'global',
+            version: 1,
+            initial: {
+                js: ['./entry-js-global/entry.js'],
             },
         },
     },
