@@ -1,3 +1,19 @@
+# [2.0.0](https://github.com/HaploidJS/haploid/compare/v1.2.0...v2.0.0) (2024-02-26)
+
+### Bug Fixes
+
+-   set executing context to window always ([92859a4](https://github.com/HaploidJS/haploid/commit/92859a4e9ae8f0d5a3f2704c80bb17e0f7ea869e))
+
+### Features
+
+-   dropURLFixInCSSByStyleSheet is enabled by default ([ab66c2d](https://github.com/HaploidJS/haploid/commit/ab66c2df313b693b59749b8d3ce199ac435a1ff9))
+-   introduce jsExportType option ([8fc4be6](https://github.com/HaploidJS/haploid/commit/8fc4be6a0802d924d28cb50308c542ec781cb08b))
+-   json entry supports jsExportType instead of AssetsMap ([f5634eb](https://github.com/HaploidJS/haploid/commit/f5634ebc5c292d01b67c93b1a47ffdb691a0a03e))
+-   remove iife and domWrapper ([53df037](https://github.com/HaploidJS/haploid/commit/53df0373b65b62794b7e4cd0d43cb12b495276e9))
+-   rename UMDExportResolver to GlobalExportResolver ([81d2171](https://github.com/HaploidJS/haploid/commit/81d21711582fb280d3d799ecddfed4b2e612f00c))
+-   support externals option ([ff72dba](https://github.com/HaploidJS/haploid/commit/ff72dba7aa049b66fca0e5b6532de42ad6de5184))
+-   support real UMD ([5389afe](https://github.com/HaploidJS/haploid/commit/5389afe82c77b62e3b8321a7641596882e716e2e))
+
 # [2.0.0-next.20231123.10](https://github.com/HaploidJS/haploid/compare/v2.0.0-next.20231122.21...v2.0.0-next.20231123.10) (2023-11-23)
 
 ### Bug Fixes
