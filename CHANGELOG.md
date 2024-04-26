@@ -1,3 +1,9 @@
+## [2.0.1](https://github.com/HaploidJS/haploid/compare/v2.0.0...v2.0.1) (2024-04-26)
+
+### Bug Fixes
+
+-   catch error(s) if evaluating umd/global failed ([b56414f](https://github.com/HaploidJS/haploid/commit/b56414f42e94489125f82e89e1a76ae9f63c9c9d))
+
 # [2.0.0](https://github.com/HaploidJS/haploid/compare/v1.2.0...v2.0.0) (2024-02-26)
 
 ### Bug Fixes
