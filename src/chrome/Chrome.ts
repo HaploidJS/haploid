@@ -249,23 +249,23 @@ export class Chrome<T = unknown> extends Debugger {
             case undefined:
                 return entry.isESM
                     ? this.#executeEntryAndGetLifecycleByESM(entry)
-                    : this.#executeEntryAndGetLifecycleByUMD(entry);
+                    : Promise.resolve().then(() => this.#executeEntryAndGetLifecycleByUMD(entry));
             case 'esm':
             case 'module':
                 entry.isESM = true;
                 return this.#executeEntryAndGetLifecycleByESM(entry);
             case 'umd':
                 entry.isESM = false;
-                return this.#executeEntryAndGetLifecycleByUMD(entry);
+                return Promise.resolve().then(() => this.#executeEntryAndGetLifecycleByUMD(entry));
             case 'global':
                 entry.isESM = false;
-                return this.#executeEntryAndGetLifecycleByGlobal(entry);
+                return Promise.resolve().then(() => this.#executeEntryAndGetLifecycleByGlobal(entry));
             default:
         }
         return Promise.reject(Error(`Unknown jsExportType ${jsType}.`));
     }
 
-    #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+    #executeEntryAndGetLifecycleByGlobal<T>(entry: ScriptNode): LifecycleFns<T> {
         this.debug('Call #executeEntryAndGetLifecycleByGlobal(%o).', entry);
         const entryKey = getUniversalGlobalExportResolver().resolve(
             () => this.#execScriptNode(entry),
@@ -276,7 +276,7 @@ export class Chrome<T = unknown> extends Debugger {
         return this.window[entryKey];
     }
 
-    #executeEntryAndGetLifecycleByUMD<T>(entry: ScriptNode): Promise<LifecycleFns<T>> {
+    #executeEntryAndGetLifecycleByUMD<T>(entry: ScriptNode): LifecycleFns<T> {
         this.debug('Call #executeEntryAndGetLifecycleByUMD(%s).', entry);
         const originalExports = {};
         const exports = originalExports;
@@ -296,7 +296,7 @@ export class Chrome<T = unknown> extends Debugger {
         if (module.exports !== originalExports) {
             // exports has been set!
             this.debug('Find module.exports=%o.', module.exports);
-            return Promise.resolve(module.exports as LifecycleFns<T>);
+            return module.exports as LifecycleFns<T>;
         }
 
         throw Error(`Cannot find UMD exports from ${entry.src}.`);

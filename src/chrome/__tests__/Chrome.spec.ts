@@ -154,6 +154,36 @@ describe('executeEntryAndGetLifecycle', () => {
         expect(mounts[0]({ name: 'foo' })).toMatchObject(['undefined', 'undefined', 'undefined']);
     });
 
+    it('throw error if js illegal when jsExportType=global', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            jsExportType: 'global',
+        });
+
+        const lf = chrome.executeEntryAndGetLifecycle(
+            new ScriptNode({
+                content: `)()`,
+            })
+        );
+        await expect(lf).rejects.toThrow();
+    });
+
+    it('throw error if js illegal when jsExportType=umd', async () => {
+        const chrome = new Chrome({
+            name: 'foo',
+            sandbox: true,
+            jsExportType: 'umd',
+        });
+
+        const lf = chrome.executeEntryAndGetLifecycle(
+            new ScriptNode({
+                content: `)()`,
+            })
+        );
+        await expect(lf).rejects.toThrow();
+    });
+
     it('jsExportType=esm', async () => {
         const chrome = new Chrome({
             name: 'foo',

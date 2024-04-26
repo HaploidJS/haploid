@@ -117,7 +117,17 @@ export abstract class BaseESEngine extends Debugger implements ESEngine {
         this.debug('execNonESMScript(%o).', script);
 
         const code = this.fixSourceURL(content, src);
-        this.scopedEvaluator.evaluate(code, env);
+        try {
+            this.scopedEvaluator.evaluate(code, env);
+        } catch (e) {
+            if (script.src)
+                if (e instanceof Error) {
+                    e.message = `${script.src || ''} ${e.message}`;
+                    throw e;
+                } else {
+                    throw Error(`Evaluate error with ${script.src}.`);
+                }
+        }
     }
 
     // TODO support inline ESM
