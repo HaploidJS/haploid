@@ -12,8 +12,9 @@ describe.only('PseudoElement', () => {
         expect(ele).not.toBeInstanceOf(HTMLUnknownElement);
     });
 
-    it(`<${HAPLOID_SCRIPT_TAG_NAME}> is instance of HTMLScriptElement`, () => {
-        expect(script).toBeInstanceOf(HTMLScriptElement);
+    it(`<${HAPLOID_SCRIPT_TAG_NAME}> is not instance of HTMLScriptElement`, () => {
+        // safari 18 does not support
+        expect(script).not.toBeInstanceOf(HTMLScriptElement);
     });
 
     it(`<${HAPLOID_SCRIPT_TAG_NAME}>'s tagName is SCRIPT`, () => {

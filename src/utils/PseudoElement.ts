@@ -29,7 +29,7 @@ export function createPseudoScriptElement(props?: PropertyDescriptorMap): HTMLSc
 
     Reflect.setPrototypeOf(
         script,
-        Object.create(HTMLScriptElement.prototype, {
+        Object.create(HaploidScriptElement.prototype, {
             constructor: { value: HTMLScriptElement, writable: true, enumerable: false, configurable: true },
             tagName: {
                 get() {
@@ -179,13 +179,17 @@ export function createPseudoScriptElement(props?: PropertyDescriptorMap): HTMLSc
             },
             text: {
                 get() {
-                    return script.textContent;
+                    return Array.from(script.childNodes)
+                        .filter(no => no.nodeType === Node.TEXT_NODE)
+                        .map(no => no.textContent)
+                        .join('');
                 },
-                set(te: string) {
+                set(te) {
                     // Correct it.
                     const sc = document.createElement('script');
                     sc.text = te;
-                    script.textContent = sc.text;
+                    const t = document.createTextNode(sc.text);
+                    script.appendChild(t);
                 },
                 enumerable: true,
                 configurable: true,
@@ -287,7 +291,7 @@ export function createPseudoLinkElement(props?: PropertyDescriptorMap): HTMLLink
 
     Reflect.setPrototypeOf(
         link,
-        Object.create(HTMLLinkElement.prototype, {
+        Object.create(HaploidLinkElement.prototype, {
             constructor: { value: HTMLLinkElement, writable: true, enumerable: false, configurable: true },
             tagName: {
                 get() {
