@@ -305,7 +305,7 @@ export class App<AdditionalOptions = Record<never, never>, CustomProps = Record<
         return this.#apiInstance;
     }
 
-    public override get [Symbol.toStringTag](): string {
+    public get [Symbol.toStringTag](): string {
         return 'App';
     }
 

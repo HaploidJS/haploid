@@ -1,3 +1,9 @@
+# [2.1.0-beta.1](https://github.com/HaploidJS/haploid/compare/v2.0.1...v2.1.0-beta.1) (2024-09-23)
+
+### Bug Fixes
+
+-   haploid-script no long inherits from HTMLScriptElement ([1943c58](https://github.com/HaploidJS/haploid/commit/1943c5822a03405d24cb44c1635a93eca78342b8))
+
 ## [2.0.1](https://github.com/HaploidJS/haploid/compare/v2.0.0...v2.0.1) (2024-04-26)
 
 ### Bug Fixes
