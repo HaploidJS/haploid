@@ -1,3 +1,9 @@
+# [2.1.0-beta.2](https://github.com/HaploidJS/haploid/compare/v2.1.0-beta.1...v2.1.0-beta.2) (2024-09-23)
+
+### Bug Fixes
+
+-   remove cypress on check-build ([6070c7c](https://github.com/HaploidJS/haploid/commit/6070c7c9cfdcf47e159863832af7f8f3bace31f4))
+
 # [2.1.0-beta.1](https://github.com/HaploidJS/haploid/compare/v2.0.1...v2.1.0-beta.1) (2024-09-23)
 
 ### Bug Fixes
