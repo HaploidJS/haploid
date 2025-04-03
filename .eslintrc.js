@@ -37,6 +37,12 @@ module.exports = {
         'prefer-template': 'error',
         'no-useless-concat': 'error',
         'prettier/prettier': ['warn', require('./.prettierrc.js')],
+        '@typescript-eslint/no-empty-object-type': [
+            'warn',
+            {
+                allowInterfaces: 'always',
+            },
+        ],
         'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
         '@typescript-eslint/explicit-member-accessibility': [
             'error',

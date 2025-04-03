@@ -433,7 +433,7 @@ export class DocumentNode extends EventNodeProxy<Document> implements DocumentSh
                 get location(): Location {
                     return nativeWindow.document.location;
                 },
-                set location(x: Location) {
+                set location(x: Location & string) {
                     nativeWindow.document.location = x;
                 },
                 /** Native cookie can only be visited from real document. */

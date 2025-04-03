@@ -5,7 +5,7 @@ export function toAbsolutePath(resolvePath: string | undefined, basePath?: strin
 
     try {
         return new URL(resolvePath, basePath || location.href).href;
-    } catch (e) {
+    } catch {
         console.warn(`Cannot convert ${resolvePath} to absolute based on ${basePath}.`);
         return resolvePath;
     }
