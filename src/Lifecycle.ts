@@ -123,7 +123,7 @@ export class Lifecycle<CustomProps> extends Debugger implements ProtectedEventEm
 
     readonly #history: LifecycleHistory[] = [];
 
-    public declare readonly hooks: LifecycleHooks<CustomProps>;
+    declare public readonly hooks: LifecycleHooks<CustomProps>;
 
     constructor(options: LifecycleOptions<CustomProps>) {
         super();

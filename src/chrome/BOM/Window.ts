@@ -437,7 +437,7 @@ export class WindowNode extends EventNodeProxy<Window & typeof globalThis> imple
                 get location(): Location {
                     return nativeWindow.location;
                 },
-                set location(x: Location) {
+                set location(x: Location & string) {
                     nativeWindow.location = x;
                 },
             },
