@@ -1,3 +1,7 @@
+## 2.1.0 (2025-04-03)
+
+- feat: support entry.type ([6faed92](https://github.com/HaploidJS/haploid/commit/6faed92))
+
 ## 2.1.0-beta.3 (2025-04-03)
 
 - chore: upgrade dependencies ([c4db032](https://github.com/HaploidJS/haploid/commit/c4db032))
