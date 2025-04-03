@@ -44,7 +44,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
         entryHref = href;
     }
 
-    if (entryPathname.endsWith('.js')) {
+    if ((!entry.type && entryPathname.endsWith('.js')) || entry.type === 'js') {
         debug('Treat %s as a non-module JS entry.', entry);
         return {
             isJS: true,
@@ -57,10 +57,11 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
         };
     }
 
-    if (entryPathname.endsWith('.mjs')) {
+    if ((!entry.type && entryPathname.endsWith('.mjs')) || entry.type === 'mjs') {
         debug('Treat %s as a module JS entry.', entry);
         return {
             isJS: true,
+            // Unnecessary to specify: jsExportType: 'esm',
             styles: [],
             scripts: [
                 new ScriptNode({
@@ -83,6 +84,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
 
     switch (true) {
         // JSON entry
+        case entry.type === 'json':
         case entryPathname.endsWith('.json'):
         case contentType.includes('application/json'): {
             const exports = (await entryResponse.json()) as
@@ -127,6 +129,7 @@ export async function resolveAssetsFromEntry(entry: AppEntry): Promise<{
             };
         }
         // HTML entry
+        case entry.type === 'html':
         case contentType.includes('text/html'):
         case contentType.includes('application/xhtml+xml'):
         case /\.(htm|[sx]?html)$/.test(entryPathname): {

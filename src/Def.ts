@@ -14,11 +14,14 @@ export type IgnoreAsset = RegExp | Array<RegExp | ((src: string) => boolean)> | 
 
 export type JSExportType = 'global' | 'esm' | 'module' | 'umd';
 
+export type EntryType = 'html' | 'js' | 'mjs' | 'json';
+
 export type AppEntry = {
     url: string;
     retries?: number;
     requestInit?: RequestInit;
     timeout?: number;
+    type?: EntryType;
 };
 
 export interface DocumentOptionsFromResolvingOnly {

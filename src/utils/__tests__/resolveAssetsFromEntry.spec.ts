@@ -213,6 +213,46 @@ describe('resolveAssetsFromEntry by ways', () => {
             expect(scripts[0].src).toBe(`${urlObj.origin}/resolveAssetsFromEntry/a.js`);
         }
     });
+
+    it('resolved a HTML entry by type=html', async () => {
+        const entryUrl = `//localhost:10810/resolveAssetsFromEntry/entry.txt`;
+
+        const { isHTML } = await resolveAssetsFromEntry({
+            url: entryUrl,
+            type: 'html',
+        });
+        expect(isHTML).toBe(true);
+    });
+
+    it('resolved a JSON entry by type=json', async () => {
+        const entryUrl = `//localhost:10810/resolveAssetsFromEntry/entry.txt?content=${JSON.stringify({})}`;
+
+        const { isJSON } = await resolveAssetsFromEntry({
+            url: entryUrl,
+            type: 'json',
+        });
+        expect(isJSON).toBe(true);
+    });
+
+    it('resolved a JS entry by type=js', async () => {
+        const entryUrl = `//localhost:10810/resolveAssetsFromEntry/entry.txt`;
+
+        const { isJS } = await resolveAssetsFromEntry({
+            url: entryUrl,
+            type: 'js',
+        });
+        expect(isJS).toBe(true);
+    });
+
+    it('resolved a ESM entry by type=mjs', async () => {
+        const entryUrl = `//localhost:10810/resolveAssetsFromEntry/entry.txt`;
+
+        const { isJS } = await resolveAssetsFromEntry({
+            url: entryUrl,
+            type: 'mjs',
+        });
+        expect(isJS).toBe(true);
+    });
 });
 describe('Detect ESM', () => {
     it('non-ESM detected', async () => {

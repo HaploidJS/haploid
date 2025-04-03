@@ -82,7 +82,8 @@ const server = http.createServer(async (request, response) => {
         cleanUrls: false,
         headers: [
             {
-                source: '**/*.@(js|css|json|htm|html|shtml|xhtml)',
+                // ⚠️ All extensions must have CORS headers
+                source: '**/*.@(js|css|json|htm|html|shtml|xhtml|txt)',
                 headers: presetHeaders,
             },
             {
@@ -118,6 +119,15 @@ const server = http.createServer(async (request, response) => {
                     {
                         key: 'Content-Type',
                         value: 'text/html;charset=utf-8',
+                    },
+                ],
+            },
+            {
+                source: '**/*.@(txt)',
+                headers: [
+                    {
+                        key: 'Content-Type',
+                        value: 'text/plain',
                     },
                 ],
             },
